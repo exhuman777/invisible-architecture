@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Invisible Architecture</title>
+<meta name="description" content="A poetic map of the modern internet. For vibecoders and anyone who wants to understand what holds the web together.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+@layer reset, tokens, base, layout, components, animations, utilities;
+
+@property --glow-opacity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.3;
+}
+
+@layer reset {
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+}
+
+@layer tokens {
+  :root {
+    --orange-100: #FFF3E8; --orange-200: #FFE4CC; --orange-300: #FFD4B3;
+    --orange-400: #FFCC99; --orange-500: #FFB380; --orange-600: #FF9966;
+    --orange-700: #E8956A; --orange-800: #D07850; --orange-900: #B85C38;
+    --black: #0A0A0A; --gray-900: #1A1A19; --gray-800: #2A2A28;
+    --gray-700: #3A3A37; --gray-600: #555550; --gray-400: #8A8A82;
+    --gray-200: #C5C5BC; --white: #F5F5F0; --pure-white: #FFFFFF;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+    --font-serif: 'Instrument Serif', 'Georgia', serif;
+    --sp-xs: 0.15rem; --sp-sm: 0.35rem; --sp-md: 0.7rem; --sp-lg: 1rem; --sp-xl: 1.5rem;
+  }
+}
+
+@layer base {
+  body {
+    background: var(--black); color: var(--white);
+    font-family: var(--font-mono); font-size: clamp(0.78rem, 1.1vw, 0.95rem);
+    line-height: 1.65; font-weight: 300; overflow-x: hidden;
+    -webkit-font-smoothing: antialiased; cursor: crosshair;
+  }
+  ::selection { background: color-mix(in oklch, var(--orange-500) 40%, transparent); color: var(--pure-white); }
+  a { color: var(--orange-500); text-decoration: none; border-bottom: 1px solid color-mix(in oklch, var(--orange-500) 30%, transparent); transition: all 0.2s; }
+  a:hover { color: var(--orange-300); border-color: var(--orange-300); }
+}
+
+@layer layout {
+  #bgCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.7; }
+  .page-wrapper { position: relative; z-index: 1; }
+  .wrap { max-width: 76ch; margin: 0 auto; padding: 0 1.2rem; }
+  section { padding: var(--sp-md) 0; }
+  .section-inner { }
+}
+
+@layer components {
+  /* ── ANSI block ASCII ── */
+  .ascii-block {
+    font-family: var(--font-mono); font-size: clamp(0.3rem, 0.6vw, 0.48rem);
+    line-height: 1.08; white-space: pre; color: var(--orange-500);
+    text-shadow: 0 0 15px color-mix(in oklch, var(--orange-500) 20%, transparent);
+    margin-bottom: var(--sp-md); overflow: hidden; user-select: none;
+  }
+  .ascii-block.hero-size { font-size: clamp(0.25rem, 0.5vw, 0.42rem); }
+
+  .section-number { font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gray-600); margin-bottom: 0.15rem; display: block; }
+  .section-title { font-family: var(--font-serif); font-size: clamp(1.6rem, 3.5vw, 3rem); font-weight: 400; font-style: italic; color: var(--pure-white); line-height: 1.15; text-wrap: balance; margin-bottom: 0.3rem; }
+  .section-subtitle { font-size: 0.7rem; color: var(--orange-600); letter-spacing: 2px; text-transform: uppercase; margin-bottom: var(--sp-md); }
+  .poem { font-family: var(--font-serif); font-size: clamp(1rem, 1.8vw, 1.35rem); font-style: italic; color: var(--orange-300); line-height: 1.55; margin-bottom: var(--sp-md); }
+  .poem br { content: ""; display: block; margin-top: 0.3em; }
+  .prose { color: var(--gray-200); margin-bottom: var(--sp-md); }
+  .prose strong { color: var(--white); font-weight: 500; }
+
+  details { border: none; border-left: 2px solid var(--gray-800); margin-bottom: 0.4rem; background: linear-gradient(170deg, color-mix(in oklch, var(--gray-900) 60%, transparent), color-mix(in oklch, var(--black) 80%, transparent)); backdrop-filter: blur(12px); box-shadow: 0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.02); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease, border-color 0.25s ease; }
+  details:hover { transform: scale(0.998) translateY(1px); box-shadow: 0 1px 4px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02); border-left-color: var(--gray-700); }
+  details[open] { border-left-color: color-mix(in oklch, var(--orange-700) 40%, var(--gray-800)); }
+  details summary { padding: 0.4rem 0.8rem; cursor: pointer; color: var(--orange-400); font-size: 0.8rem; list-style: none; display: flex; align-items: center; gap: 0.5rem; }
+  details summary::before { content: "+"; font-size: 0.85rem; color: var(--gray-600); width: 1em; text-align: center; }
+  details[open] summary::before { content: "-"; color: var(--orange-500); }
+  details summary::-webkit-details-marker { display: none; }
+  details .detail-body { padding: 0 0.8rem 0.6rem; color: var(--gray-400); font-size: 0.75rem; line-height: 1.7; }
+  details .detail-body strong { color: var(--gray-200); }
+
+  .divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--gray-800) 20%, var(--orange-900) 50%, var(--gray-800) 80%, transparent); margin: var(--sp-md) 0; }
+
+  .code-block { background: linear-gradient(170deg, color-mix(in oklch, var(--gray-900) 80%, transparent), color-mix(in oklch, var(--black) 90%, transparent)); border: none; border-left: 2px solid var(--gray-800); padding: 0.7rem 0.9rem; font-size: 0.68rem; line-height: 1.7; overflow-x: auto; white-space: pre; color: var(--gray-400); margin-bottom: var(--sp-md); box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.02); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease, border-color 0.25s ease; }
+  .code-block:hover { transform: scale(0.995) translateY(1px); box-shadow: 0 1px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02); border-left-color: var(--orange-800); }
+  .code-block .comment { color: var(--gray-700); }
+  .code-block .keyword { color: var(--orange-500); }
+  .code-block .string { color: var(--orange-300); }
+  .code-block .dim { color: var(--gray-600); }
+
+  .comparison-table { width: 100%; border-collapse: collapse; font-size: 0.68rem; margin-bottom: var(--sp-md); }
+  .comparison-table th { text-align: left; padding: 0.2rem 0.5rem; border: none; border-bottom: 1px solid var(--gray-700); color: var(--orange-400); font-weight: 400; letter-spacing: 1px; font-size: 0.6rem; text-transform: uppercase; }
+  .comparison-table td { padding: 0.2rem 0.5rem; border: none; border-bottom: 1px solid color-mix(in oklch, var(--gray-800) 50%, transparent); color: var(--gray-400); }
+
+  /* ── Flow diagram (CSS, not ASCII) ── */
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; margin-bottom: var(--sp-md); }
+  .flow-node { border: none; border-bottom: 2px solid var(--gray-800); padding: 0.4rem 0.8rem; font-size: 0.65rem; text-align: center; min-width: 180px; max-width: 320px; width: 100%; background: linear-gradient(170deg, color-mix(in oklch, var(--gray-900) 50%, transparent), color-mix(in oklch, var(--black) 70%, transparent)); position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.02); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease, border-color 0.25s ease; }
+  .flow-node:hover { transform: scale(0.97) translateY(2px); box-shadow: 0 0 2px rgba(0,0,0,0.3); border-bottom-color: var(--orange-800); }
+  .flow-node .node-title { color: var(--orange-400); font-weight: 500; letter-spacing: 1px; font-size: 0.6rem; text-transform: uppercase; }
+  .flow-node .node-desc { color: var(--gray-400); font-size: 0.58rem; margin-top: 0.15rem; }
+  .flow-node.wide { max-width: 460px; }
+  .flow-node.accent { border-bottom-color: color-mix(in oklch, var(--orange-700) 50%, var(--gray-700)); }
+  .flow-arrow { width: 1px; height: 16px; background: var(--gray-700); position: relative; }
+  .flow-arrow::after { content: ""; position: absolute; bottom: -3px; left: -3px; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--gray-700); }
+  .flow-row { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 480px; }
+  .flow-row .flow-node { min-width: 0; flex: 1; min-width: 100px; }
+  .flow-branch { width: 60%; height: 1px; background: var(--gray-700); margin: 0; }
+
+  /* ── Stack layers ── */
+  .stack-layer { border: none; border-bottom: 1px solid var(--gray-800); padding: 0.35rem 0.7rem; display: grid; grid-template-columns: 10ch 1fr; gap: 0.7rem; align-items: center; transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), background 0.2s; }
+  .stack-layer:last-child { border-bottom: none; }
+  .stack-layer:hover { background: color-mix(in oklch, var(--orange-900) 8%, transparent); transform: translateX(4px); }
+  .stack-layer .layer-name { color: var(--orange-400); font-size: 0.68rem; letter-spacing: 1px; }
+  .stack-layer .layer-desc { color: var(--gray-400); font-size: 0.63rem; }
+  .glow-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--orange-500); box-shadow: 0 0 6px var(--orange-600); margin-right: 0.4em; animation: glow-pulse 3s ease-in-out infinite; }
+
+  .link-row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: var(--sp-md); }
+  .link-pill { font-size: 0.6rem; color: var(--gray-400); padding: 2px 8px; border: 1px solid var(--gray-800); transition: all 0.2s, transform 0.2s cubic-bezier(0.22,1,0.36,1); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .link-pill:hover { border-color: color-mix(in oklch, var(--orange-500) 40%, var(--gray-800)); color: var(--orange-400); background: color-mix(in oklch, var(--orange-900) 10%, transparent); transform: translateY(1px); box-shadow: 0 0 1px rgba(0,0,0,0.3); }
+  .link-pill:active { transform: translateY(2px); box-shadow: none; }
+
+  /* ── Wide horizontal diagram ── */
+  .mega-diagram { width: 100vw; margin-left: calc(-50vw + 50%); overflow-x: auto; padding: var(--sp-md) var(--sp-lg); background: color-mix(in oklch, var(--gray-900) 40%, transparent); border-top: 1px solid var(--gray-800); border-bottom: 1px solid var(--gray-800); margin-bottom: var(--sp-md); }
+  .mega-grid { display: grid; grid-template-columns: repeat(6, minmax(140px, 1fr)); gap: 6px; min-width: 900px; }
+  .mega-cell { border: none; border-left: 2px solid var(--gray-800); padding: 0.35rem 0.5rem; font-size: 0.55rem; background: linear-gradient(170deg, color-mix(in oklch, var(--gray-900) 40%, transparent), color-mix(in oklch, var(--black) 60%, transparent)); box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), border-color 0.2s, background 0.2s, box-shadow 0.25s ease; }
+  .mega-cell:hover { border-left-color: var(--orange-800); background: color-mix(in oklch, var(--orange-900) 8%, transparent); transform: scale(0.97) translateY(1px); box-shadow: 0 0 2px rgba(0,0,0,0.3); }
+  .mega-cell .mc-cat { color: var(--orange-500); font-size: 0.5rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 500; margin-bottom: 0.15rem; }
+  .mega-cell .mc-items { color: var(--gray-400); line-height: 1.5; }
+  .mega-cell .mc-items a { color: var(--gray-400); border-bottom-color: var(--gray-800); font-size: 0.55rem; }
+  .mega-cell .mc-items a:hover { color: var(--orange-400); }
+  .mega-header { grid-column: 1 / -1; text-align: center; font-size: 0.6rem; color: var(--gray-600); letter-spacing: 2px; text-transform: uppercase; padding: 0.2rem; border: none; background: none; }
+  .mega-header:hover { background: none; border-color: transparent; }
+  .mega-connector { grid-column: 1 / -1; text-align: center; font-size: 0.5rem; color: var(--gray-700); padding: 0.1rem; border: none; background: none; letter-spacing: 4px; }
+  .mega-connector:hover { background: none; border-color: transparent; }
+
+  /* ── Slot Machine Iceberg ── */
+  .iceberg { text-align: center; padding: var(--sp-lg) 1rem; position: relative; overflow: hidden; }
+  .slot-machine { max-width: 56ch; margin: 0 auto; }
+  .slot-frame { font-family: var(--font-mono); font-size: 0.5rem; color: var(--gray-700); line-height: 1.1; white-space: pre; user-select: none; }
+  .slot-reels { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin: 0.3rem 0; }
+  .slot-reel { height: 2.2rem; overflow: hidden; position: relative; background: color-mix(in oklch, var(--black) 80%, transparent); border-left: 2px solid var(--gray-800); }
+  .slot-reel:hover { border-left-color: var(--orange-800); }
+  .slot-strip { transition: transform 0.1s linear; }
+  .slot-item { height: 2.2rem; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; letter-spacing: 1px; color: var(--gray-500); text-transform: uppercase; padding: 0 0.3rem; white-space: nowrap; }
+  .slot-item.hot { color: var(--orange-400); text-shadow: 0 0 10px color-mix(in oklch, var(--orange-500) 25%, transparent); }
+  .slot-btn { display: inline-block; cursor: pointer; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange-400); padding: 0.3rem 1.2rem; border: 1px solid var(--orange-800); background: color-mix(in oklch, var(--orange-900) 10%, transparent); margin-top: 0.4rem; transition: all 0.2s; user-select: none; }
+  .slot-btn:hover { background: color-mix(in oklch, var(--orange-900) 25%, transparent); border-color: var(--orange-600); color: var(--orange-300); transform: translateY(1px); }
+  .slot-btn:active { transform: translateY(2px); }
+  .slot-label { font-size: 0.45rem; color: var(--gray-700); letter-spacing: 2px; text-transform: uppercase; margin-top: 0.3rem; }
+  .slot-jackpot { font-family: var(--font-serif); font-size: clamp(0.7rem, 1.2vw, 0.9rem); font-style: italic; color: var(--orange-300); margin-top: 0.4rem; opacity: 0; transition: opacity 0.5s; min-height: 1.2rem; }
+  .slot-jackpot.visible { opacity: 1; }
+
+  .marquee-track { overflow: hidden; white-space: nowrap; border-top: 1px solid var(--gray-800); border-bottom: 1px solid var(--gray-800); padding: 0.2rem 0; }
+  .marquee-content { display: inline-block; animation: marquee 45s linear infinite; font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gray-700); }
+
+  .hero { min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: var(--sp-lg) 1rem; }
+  .hero .section-title { font-size: clamp(2.2rem, 5vw, 4.5rem); margin-bottom: 0.3rem; }
+  .hero-tagline { font-size: clamp(0.55rem, 0.9vw, 0.75rem); color: var(--gray-600); letter-spacing: 3px; text-transform: uppercase; max-width: 50ch; }
+  .hero-bio { font-family: var(--font-serif); font-size: clamp(0.75rem, 1.3vw, 1rem); font-style: italic; color: var(--orange-400); margin-top: var(--sp-md); letter-spacing: 1px; }
+  .hero-links { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; margin-top: var(--sp-sm); }
+  .scroll-hint { position: absolute; bottom: var(--sp-lg); left: 50%; transform: translateX(-50%); font-size: 0.55rem; color: var(--gray-700); letter-spacing: 2px; text-transform: uppercase; animation: pulse-down 2s ease-in-out infinite; }
+
+  .footer-99 { text-align: center; padding: var(--sp-xl) 1rem; border-top: 1px solid var(--gray-800); }
+  .visitor-counter { display: inline-block; background: var(--gray-900); border: 1px solid var(--gray-800); padding: 3px 10px; font-size: 0.65rem; color: var(--orange-600); letter-spacing: 2px; margin: 0.4rem 0; }
+  .footer-99 .best-viewed { font-size: 0.5rem; color: var(--gray-700); margin-top: 0.4rem; }
+  .footer-99 .construction { font-size: 0.55rem; color: var(--gray-600); margin-top: 0.15rem; }
+}
+
+@layer animations {
+  @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes pulse-down { 0%, 100% { opacity: 0.3; transform: translateX(-50%) translateY(0); } 50% { opacity: 0.7; transform: translateX(-50%) translateY(5px); } }
+  @keyframes glow-pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+  @keyframes cursor-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  .blink { animation: cursor-blink 1s step-end infinite; }
+}
+
+@layer utilities {
+  .text-center { text-align: center; }
+  .mt-md { margin-top: var(--sp-md); }
+  .mb-sm { margin-bottom: var(--sp-sm); }
+  .mb-md { margin-bottom: var(--sp-md); }
+}
+
+@media (max-width: 640px) {
+  .ascii-block { font-size: 0.2rem; }
+  .ascii-block.hero-size { font-size: 0.16rem; }
+  .flow-row { flex-direction: column; align-items: center; }
+  .flow-row .flow-node { width: 100%; }
+  .stack-layer { grid-template-columns: 1fr; gap: 0.15rem; }
+}
+@media print {
+  #bgCanvas { display: none; }
+  body { background: white; color: black; }
+  .ascii-block { color: #333; text-shadow: none; }
+}
+</style>
+<script>
+(function() {
+  const originalConsole = {
+    log: console.log,
+    error: console.error,
+    warn: console.warn,
+    info: console.info,
+    debug: console.debug
+  };
+
+  function sendLog(level, args) {
+    try {
+      const message = args.map(arg => {
+        if (typeof arg === 'string') return arg;
+        if (arg instanceof Error) return arg.message;
+        try { return JSON.stringify(arg); } catch { return String(arg); }
+      }).join(' ');
+
+      let stack = undefined;
+      if (level === 'error') {
+        for (const arg of args) {
+          if (arg instanceof Error && arg.stack) {
+            stack = arg.stack;
+            break;
+          }
+        }
+      }
+
+      fetch('/__zo_log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          level,
+          message,
+          timestamp: new Date().toISOString(),
+          url: window.location.href,
+          stack
+        })
+      }).catch(() => {});
+    } catch {}
+  }
+
+  ['log', 'error', 'warn', 'info', 'debug'].forEach(level => {
+    console[level] = function(...args) {
+      originalConsole[level].apply(console, args);
+      sendLog(level, args);
+    };
+  });
+
+  window.addEventListener('error', (e) => {
+    sendLog('error', [e.error || e.message]);
+  });
+
+  window.addEventListener('unhandledrejection', (e) => {
+    sendLog('error', [e.reason || 'Unhandled promise rejection']);
+  });
+})();
+</script></head>
+
+<body>
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+<div class="page-wrapper">
+
+  <!-- ══ HERO ══ -->
+  <section class="hero" id="top">
+    <div class="ascii-block hero-size" aria-hidden="true">
+████████╗██╗  ██╗███████╗    ██╗███╗   ██╗██╗   ██╗██╗███████╗██╗██████╗ ██╗     ███████╗
+╚══██╔══╝██║  ██║██╔════╝    ██║████╗  ██║██║   ██║██║██╔════╝██║██╔══██╗██║     ██╔════╝
+   ██║   ███████║█████╗      ██║██╔██╗ ██║██║   ██║██║███████╗██║██████╔╝██║     █████╗
+   ██║   ██╔══██║██╔══╝      ██║██║╚██╗██║╚██╗ ██╔╝██║╚════██║██║██╔══██╗██║     ██╔══╝
+   ██║   ██║  ██║███████╗    ██║██║ ╚████║ ╚████╔╝ ██║███████║██║██████╔╝███████╗███████╗
+   ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚═╝╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚══════╝╚═╝╚═════╝ ╚══════╝╚══════╝
+ █████╗ ██████╗  ██████╗██╗  ██╗██╗████████╗███████╗ ██████╗████████╗██╗   ██╗██████╗ ███████╗
+██╔══██╗██╔══██╗██╔════╝██║  ██║██║╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗██╔════╝
+███████║██████╔╝██║     ███████║██║   ██║   █████╗  ██║        ██║   ██║   ██║██████╔╝█████╗
+██╔══██║██╔══██╗██║     ██╔══██║██║   ██║   ██╔══╝  ██║        ██║   ██║   ██║██╔══██╗██╔══╝
+██║  ██║██║  ██║╚██████╗██║  ██║██║   ██║   ███████╗╚██████╗   ██║   ╚██████╔╝██║  ██║███████╗
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝   ╚═╝   ╚══════╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝</div>
+    <p class="section-title">The Invisible Architecture</p>
+    <p class="hero-tagline">A poetic map of the services, protocols, and invisible layers that hold the modern internet together. For vibecoders, builders, and the curious.</p>
+    <p class="hero-bio">&#10047;&#8902;&#65377;&#729;Romanticizing&#8346;&#8728; &#729;AI tech&#8346;&#8728; &#729;blockchain&#65377;&#729;&#8902;&#65377;and&#65377;&#8902;&#729;prediction&#8902;&#65377;&#729;markets&#8902;&#65377;&#729; &#10023;</p>
+    <div class="hero-links">
+      <a href="https://x.com/3xhuman" target="_blank" class="link-pill">X / @3xhuman</a>
+      <a href="https://github.com/exhuman777" target="_blank" class="link-pill">GitHub</a>
+      <a href="https://o.zo.space/" target="_blank" class="link-pill">Zo</a>
+      <a href="https://exhuman.neocities.org/" target="_blank" class="link-pill">Neocities</a>
+    </div>
+    <span class="scroll-hint">scroll to descend</span>
+  </section>
+
+  <div class="marquee-track" aria-hidden="true">
+    <span class="marquee-content">DNS &middot; API &middot; DOCKER &middot; GITHUB &middot; VERCEL &middot; SUPABASE &middot; VPS &middot; CLOUDFLARE &middot; MCP &middot; AI &middot; DATABASES &middot; TCP/IP &middot; WEBSOCKETS &middot; CDN &middot; SERVERLESS &middot; CONTAINERS &middot; POSTGRES &middot; JWT &middot; RLS &middot; DNS &middot; API &middot; DOCKER &middot; GITHUB &middot; VERCEL &middot; SUPABASE &middot; VPS &middot; CLOUDFLARE &middot; MCP &middot; AI &middot; DATABASES &middot; TCP/IP &middot; WEBSOCKETS &middot; CDN &middot; SERVERLESS &middot; CONTAINERS &middot; POSTGRES &middot; JWT &middot; RLS &middot;</span>
+  </div>
+
+  <!-- ══ THE SLOT MACHINE ══ -->
+  <div class="iceberg">
+    <p style="font-family: var(--font-serif); font-size: clamp(1.2rem, 2.5vw, 2rem); font-style: italic; color: var(--pure-white); margin-bottom: var(--sp-xs);">Every deploy is a pull of the lever.</p>
+    <p style="font-size: 0.65rem; color: var(--gray-400); max-width: 55ch; margin: 0 auto var(--sp-sm);">You ship code. The internet gambles on DNS resolving, SSL handshaking, CDNs caching, databases responding, APIs not rate-limiting you. Every page load is a parlay across 30+ services. The house always runs.</p>
+
+    <div class="slot-machine">
+      <div class="slot-frame">┌─────────────────────────────────────────────────────────┐
+│  ★  T H E   I N V I S I B L E   S L O T S  ★  [$0.00] │
+├──────────────────┬──────────────────┬───────────────────┤</div>
+      <div class="slot-reels" id="slotReels">
+        <div class="slot-reel" id="reel1"><div class="slot-strip"></div></div>
+        <div class="slot-reel" id="reel2"><div class="slot-strip"></div></div>
+        <div class="slot-reel" id="reel3"><div class="slot-strip"></div></div>
+      </div>
+      <div class="slot-frame">├──────────────────┴──────────────────┴───────────────────┤
+│  every page load is a spin. the house is cloudflare.    │
+└─────────────────────────────────────────────────────────┘</div>
+      <div class="slot-btn" id="slotPull">&#9733; PULL &#9733;</div>
+      <div class="slot-label">what's running under your app right now?</div>
+      <div class="slot-jackpot" id="slotJackpot"></div>
+    </div>
+  </div>
+
+  <!-- ══ THE MEGA MAP — full-width horizontal grid ══ -->
+  <div class="mega-diagram">
+    <div class="mega-grid">
+      <div class="mega-header">The Complete Map: Every Layer of the Modern Internet</div>
+
+      <div class="mega-cell"><div class="mc-cat">Naming</div><div class="mc-items"><a href="https://www.namecheap.com/" target="_blank">Namecheap</a><br><a href="https://www.cloudflare.com/products/registrar/" target="_blank">Cloudflare</a><br><a href="https://porkbun.com/" target="_blank">Porkbun</a><br><a href="https://domains.google/" target="_blank">Google Domains</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">DNS</div><div class="mc-items"><a href="https://www.cloudflare.com/dns/" target="_blank">Cloudflare DNS</a><br><a href="https://aws.amazon.com/route53/" target="_blank">Route 53</a><br>Vercel DNS<br>Google Cloud DNS</div></div>
+      <div class="mega-cell"><div class="mc-cat">SSL / TLS</div><div class="mc-items"><a href="https://letsencrypt.org/" target="_blank">Let's Encrypt</a><br>Cloudflare auto<br>Vercel auto<br>AWS ACM</div></div>
+      <div class="mega-cell"><div class="mc-cat">CDN / Edge</div><div class="mc-items"><a href="https://www.cloudflare.com/" target="_blank">Cloudflare</a><br><a href="https://www.fastly.com/" target="_blank">Fastly</a><br><a href="https://aws.amazon.com/cloudfront/" target="_blank">CloudFront</a><br><a href="https://bunny.net/" target="_blank">Bunny CDN</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">DDoS / WAF</div><div class="mc-items">Cloudflare WAF<br>AWS Shield<br><a href="https://www.crowdsec.net/" target="_blank">CrowdSec</a><br>Akamai</div></div>
+      <div class="mega-cell"><div class="mc-cat">Version Control</div><div class="mc-items"><a href="https://github.com/" target="_blank">GitHub</a><br><a href="https://gitlab.com/" target="_blank">GitLab</a><br><a href="https://bitbucket.org/" target="_blank">Bitbucket</a><br><a href="https://codeberg.org/" target="_blank">Codeberg</a></div></div>
+
+      <div class="mega-connector">|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</div>
+
+      <div class="mega-cell"><div class="mc-cat">Frontend Host</div><div class="mc-items"><a href="https://vercel.com/" target="_blank">Vercel</a><br><a href="https://www.netlify.com/" target="_blank">Netlify</a><br><a href="https://pages.cloudflare.com/" target="_blank">CF Pages</a><br><a href="https://pages.github.com/" target="_blank">GitHub Pages</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Backend / PaaS</div><div class="mc-items"><a href="https://railway.app/" target="_blank">Railway</a><br><a href="https://render.com/" target="_blank">Render</a><br><a href="https://fly.io/" target="_blank">Fly.io</a><br><a href="https://zo.computer/" target="_blank">Zo.computer</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">VPS</div><div class="mc-items"><a href="https://www.digitalocean.com/" target="_blank">DigitalOcean</a><br><a href="https://www.hetzner.com/" target="_blank">Hetzner</a><br><a href="https://www.vultr.com/" target="_blank">Vultr</a><br><a href="https://www.linode.com/" target="_blank">Linode</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Containers</div><div class="mc-items"><a href="https://www.docker.com/" target="_blank">Docker</a><br><a href="https://kubernetes.io/" target="_blank">Kubernetes</a><br><a href="https://hub.docker.com/" target="_blank">Docker Hub</a><br>GHCR</div></div>
+      <div class="mega-cell"><div class="mc-cat">BaaS</div><div class="mc-items"><a href="https://supabase.com/" target="_blank">Supabase</a><br><a href="https://firebase.google.com/" target="_blank">Firebase</a><br><a href="https://appwrite.io/" target="_blank">Appwrite</a><br><a href="https://pocketbase.io/" target="_blank">PocketBase</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">CI / CD</div><div class="mc-items"><a href="https://docs.github.com/en/actions" target="_blank">GitHub Actions</a><br><a href="https://circleci.com/" target="_blank">CircleCI</a><br>Vercel auto<br>GitLab CI</div></div>
+
+      <div class="mega-connector">|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</div>
+
+      <div class="mega-cell"><div class="mc-cat">SQL Database</div><div class="mc-items"><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a><br><a href="https://neon.tech/" target="_blank">Neon</a><br><a href="https://turso.tech/" target="_blank">Turso (SQLite)</a><br><a href="https://planetscale.com/" target="_blank">PlanetScale</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">NoSQL / KV</div><div class="mc-items"><a href="https://redis.io/" target="_blank">Redis</a><br><a href="https://www.mongodb.com/" target="_blank">MongoDB</a><br>Cloudflare KV<br><a href="https://upstash.com/" target="_blank">Upstash</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Vector DB</div><div class="mc-items"><a href="https://github.com/pgvector/pgvector" target="_blank">pgvector</a><br><a href="https://www.pinecone.io/" target="_blank">Pinecone</a><br><a href="https://qdrant.tech/" target="_blank">Qdrant</a><br><a href="https://weaviate.io/" target="_blank">Weaviate</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Auth</div><div class="mc-items"><a href="https://supabase.com/auth" target="_blank">Supabase Auth</a><br><a href="https://clerk.com/" target="_blank">Clerk</a><br><a href="https://auth0.com/" target="_blank">Auth0</a><br><a href="https://authjs.dev/" target="_blank">Auth.js</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Storage</div><div class="mc-items"><a href="https://aws.amazon.com/s3/" target="_blank">AWS S3</a><br><a href="https://developers.cloudflare.com/r2/" target="_blank">Cloudflare R2</a><br>Supabase Storage<br><a href="https://uploadthing.com/" target="_blank">UploadThing</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Queues / Cron</div><div class="mc-items"><a href="https://upstash.com/" target="_blank">Upstash</a><br><a href="https://inngest.com/" target="_blank">Inngest</a><br><a href="https://trigger.dev/" target="_blank">Trigger.dev</a><br><a href="https://quirrel.dev/" target="_blank">Quirrel</a></div></div>
+
+      <div class="mega-connector">|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</div>
+
+      <div class="mega-cell"><div class="mc-cat">Payments</div><div class="mc-items"><a href="https://stripe.com/" target="_blank">Stripe</a><br><a href="https://www.lemonsqueezy.com/" target="_blank">LemonSqueezy</a><br><a href="https://paddle.com/" target="_blank">Paddle</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Email</div><div class="mc-items"><a href="https://resend.com/" target="_blank">Resend</a><br><a href="https://postmarkapp.com/" target="_blank">Postmark</a><br><a href="https://sendgrid.com/" target="_blank">SendGrid</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Analytics</div><div class="mc-items"><a href="https://posthog.com/" target="_blank">PostHog</a><br><a href="https://plausible.io/" target="_blank">Plausible</a><br><a href="https://mixpanel.com/" target="_blank">Mixpanel</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Errors / Monitoring</div><div class="mc-items"><a href="https://sentry.io/" target="_blank">Sentry</a><br><a href="https://grafana.com/" target="_blank">Grafana</a><br><a href="https://betteruptime.com/" target="_blank">Better Uptime</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Secrets</div><div class="mc-items"><a href="https://www.doppler.com/" target="_blank">Doppler</a><br><a href="https://infisical.com/" target="_blank">Infisical</a><br>Env variables<br>AWS Secrets Mgr</div></div>
+      <div class="mega-cell"><div class="mc-cat">Feature Flags</div><div class="mc-items"><a href="https://launchdarkly.com/" target="_blank">LaunchDarkly</a><br><a href="https://posthog.com/feature-flags" target="_blank">PostHog Flags</a><br><a href="https://flagsmith.com/" target="_blank">Flagsmith</a></div></div>
+
+      <div class="mega-connector">|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</div>
+
+      <div class="mega-cell"><div class="mc-cat">AI Inference</div><div class="mc-items"><a href="https://www.anthropic.com/" target="_blank">Anthropic</a><br><a href="https://openai.com/" target="_blank">OpenAI</a><br><a href="https://deepmind.google/" target="_blank">Google Gemini</a><br><a href="https://groq.com/" target="_blank">Groq</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">AI Tools / MCP</div><div class="mc-items"><a href="https://modelcontextprotocol.io/" target="_blank">MCP Spec</a><br><a href="https://registry.modelcontextprotocol.io/" target="_blank">MCP Registry</a><br><a href="https://glama.ai/mcp/servers" target="_blank">Glama Directory</a><br><a href="https://smithery.ai/" target="_blank">Smithery</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Agent Frameworks</div><div class="mc-items"><a href="https://docs.anthropic.com/en/docs/agents" target="_blank">Claude Agents</a><br><a href="https://sdk.vercel.ai/" target="_blank">Vercel AI SDK</a><br><a href="https://www.langchain.com/" target="_blank">LangChain</a><br><a href="https://www.crewai.com/" target="_blank">CrewAI</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Agent Skills</div><div class="mc-items"><a href="https://skills.sh/" target="_blank">Skills.sh</a><br><a href="https://composio.dev/" target="_blank">Composio</a><br><a href="https://e2b.dev/" target="_blank">E2B (sandboxes)</a><br><a href="https://browserbase.com/" target="_blank">Browserbase</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">Open Models</div><div class="mc-items"><a href="https://together.ai/" target="_blank">Together AI</a><br><a href="https://replicate.com/" target="_blank">Replicate</a><br><a href="https://ollama.com/" target="_blank">Ollama (local)</a><br><a href="https://huggingface.co/" target="_blank">HuggingFace</a></div></div>
+      <div class="mega-cell"><div class="mc-cat">AI Coding</div><div class="mc-items"><a href="https://claude.ai/code" target="_blank">Claude Code</a><br><a href="https://cursor.sh/" target="_blank">Cursor</a><br><a href="https://github.com/features/copilot" target="_blank">Copilot</a><br><a href="https://bolt.new/" target="_blank">Bolt.new</a></div></div>
+    </div>
+  </div>
+
+
+  <!-- ══ 01 DNS ══ -->
+  <section id="dns">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+██████╗ ███╗   ██╗███████╗
+██╔══██╗████╗  ██║██╔════╝
+██║  ██║██╔██╗ ██║███████╗
+██║  ██║██║╚██╗██║╚════██║
+██████╔╝██║ ╚████║███████║
+╚═════╝ ╚═╝  ╚═══╝╚══════╝</div>
+      <span class="section-number">01 / 13</span>
+      <h2 class="section-title">The Act of Naming</h2>
+      <p class="section-subtitle">Domain Names &amp; DNS</p>
+      <p class="poem">Before there were names there were only numbers.<br>Then someone said: let there be words.<br>And the internet became a place you could find.</p>
+      <p class="prose">The <strong>Domain Name System</strong> is like a phone book for the internet. You type a name (<strong>exhuman.xyz</strong>), DNS finds the actual address computers use (<strong>76.76.21.21</strong>). Every URL triggers this lookup in under 100ms.</p>
+      <div class="code-block"><span class="keyword">you type:</span>   <span class="string">exhuman.xyz</span>
+    <span class="dim">|</span>
+<span class="keyword">browser cache</span>  <span class="dim">--> already resolved?</span>
+    <span class="dim">|  no</span>
+<span class="keyword">OS cache</span>        <span class="dim">--> machine resolved it?</span>
+    <span class="dim">|  no</span>
+<span class="keyword">resolver</span>       <span class="dim">(1.1.1.1)</span>
+    <span class="dim">|  root server  --> who handles .xyz?</span>
+    <span class="dim">|  TLD server   --> who handles exhuman.xyz?</span>
+    <span class="dim">|  authoritative --> what is the IP?</span>
+<span class="keyword">answer:</span>        <span class="string">76.76.21.21</span></div>
+      <p class="prose"><strong>Registrars</strong> are where you buy a domain name (like buying a phone number). <strong>DNS providers</strong> handle the actual lookups (like running the phone book). They can be different companies.</p>
+      <details>
+        <summary>DNS record types</summary>
+        <div class="detail-body"><strong>A</strong> = IPv4. <strong>AAAA</strong> = IPv6. <strong>CNAME</strong> = alias. <strong>MX</strong> = mail. <strong>TXT</strong> = verification/SPF. <strong>NS</strong> = nameservers.</div>
+      </details>
+      <div class="link-row">
+        <a href="https://www.cloudflare.com/products/registrar/" class="link-pill" target="_blank">Cloudflare Registrar</a>
+        <a href="https://www.namecheap.com/" class="link-pill" target="_blank">Namecheap</a>
+        <a href="https://porkbun.com/" class="link-pill" target="_blank">Porkbun</a>
+        <a href="https://aws.amazon.com/route53/" class="link-pill" target="_blank">Route 53</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 02 API ══ -->
+  <section id="api">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+ █████╗ ██████╗ ██╗
+██╔══██╗██╔══██╗██║
+███████║██████╔╝██║
+██╔══██║██╔═══╝ ██║
+██║  ██║██║     ██║
+╚═╝  ╚═╝╚═╝     ╚═╝</div>
+      <span class="section-number">02 / 13</span>
+      <h2 class="section-title">The Language of Strangers</h2>
+      <p class="section-subtitle">Application Programming Interfaces</p>
+      <p class="poem">Two systems that have never met exchange value<br>because they agreed on a shared grammar.<br>This is civilization compressed into HTTP.</p>
+      <div class="code-block"><span class="keyword">GET</span>    <span class="string">/users/42</span>       <span class="dim">// retrieve</span>
+<span class="keyword">POST</span>   <span class="string">/users</span>          <span class="dim">// create</span>
+<span class="keyword">PUT</span>    <span class="string">/users/42</span>       <span class="dim">// update</span>
+<span class="keyword">DELETE</span> <span class="string">/users/42</span>       <span class="dim">// remove</span>
+
+<span class="comment">// GraphQL: one endpoint, exact fields</span>
+<span class="keyword">POST</span>   <span class="string">/graphql</span>
+  <span class="dim">{ user(id: 42) { name, posts { title } } }</span></div>
+      <details>
+        <summary>REST vs. GraphQL</summary>
+        <div class="detail-body"><strong>REST</strong>: simple, cacheable, standard HTTP. Over/under-fetches. <strong>GraphQL</strong>: one request, exact data. Harder caching, more complex server-side.</div>
+      </details>
+      <div class="link-row">
+        <a href="https://www.postman.com/" class="link-pill" target="_blank">Postman</a>
+        <a href="https://graphql.org/" class="link-pill" target="_blank">GraphQL</a>
+        <a href="https://swagger.io/" class="link-pill" target="_blank">OpenAPI</a>
+        <a href="https://hoppscotch.io/" class="link-pill" target="_blank">Hoppscotch</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 03 GITHUB ══ -->
+  <section id="github">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+ ██████╗ ██╗████████╗██╗  ██╗██╗   ██╗██████╗
+██╔════╝ ██║╚══██╔══╝██║  ██║██║   ██║██╔══██╗
+██║  ███╗██║   ██║   ███████║██║   ██║██████╔╝
+██║   ██║██║   ██║   ██╔══██║██║   ██║██╔══██╗
+╚██████╔╝██║   ██║   ██║  ██║╚██████╔╝██████╔╝
+ ╚═════╝ ╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝</div>
+      <span class="section-number">03 / 13</span>
+      <h2 class="section-title">The Town Square of Code</h2>
+      <p class="section-subtitle">Version Control &amp; CI/CD</p>
+      <p class="poem">Every line has a history. Every decision is reversible.<br>Every collaboration preserved in commits and diffs.</p>
+      <p class="prose"><strong>GitHub</strong> is where developers store and share code. Think Google Docs history, but for software. Every change is tracked, every version is saved, and teams review each other's work. <strong>CI/CD</strong> means your code gets tested and deployed automatically every time you save. 100M+ developers. 420M+ repos.</p>
+      <div class="code-block"><span class="keyword">VERSION CONTROL</span>  <span class="dim">Commits, branches, pull requests, code review</span>
+<span class="keyword">CI/CD</span>            <span class="dim">GitHub Actions: push --> test --> build --> deploy</span>
+<span class="keyword">COLLABORATION</span>    <span class="dim">Issues, PRs, Discussions, Projects (kanban)</span>
+<span class="keyword">ECOSYSTEM</span>        <span class="dim">Pages (free hosting), Packages, Copilot, Dependabot</span></div>
+
+      <!-- CSS flow diagram for git workflow -->
+      <div class="flow" style="margin-top: var(--sp-md);">
+        <div class="flow-row">
+          <div class="flow-node"><span class="node-title">Local Machine</span><span class="node-desc">git commit / git push</span></div>
+          <div class="flow-node accent"><span class="node-title">GitHub Repo</span><span class="node-desc">Actions run tests</span></div>
+          <div class="flow-node"><span class="node-title">Vercel</span><span class="node-desc">Auto-deploy on push</span></div>
+        </div>
+      </div>
+
+      <details>
+        <summary>Alternatives: GitLab, Bitbucket, Codeberg</summary>
+        <div class="detail-body"><strong>GitLab</strong>: self-hostable, built-in CI. <strong>Bitbucket</strong>: Atlassian ecosystem. <strong>Codeberg</strong>: nonprofit, Gitea-based. <strong>Sourcehut</strong>: minimal, email-based.</div>
+      </details>
+      <div class="link-row">
+        <a href="https://github.com/" class="link-pill" target="_blank">GitHub</a>
+        <a href="https://gitlab.com/" class="link-pill" target="_blank">GitLab</a>
+        <a href="https://bitbucket.org/" class="link-pill" target="_blank">Bitbucket</a>
+        <a href="https://docs.github.com/en/actions" class="link-pill" target="_blank">Actions</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 04 DOCKER ══ -->
+  <section id="docker">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+██████╗  ██████╗  ██████╗██╗  ██╗███████╗██████╗
+██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+██║  ██║██║   ██║██║     █████╔╝ █████╗  ██████╔╝
+██║  ██║██║   ██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+██████╔╝╚██████╔╝╚██████╗██║  ██╗███████╗██║  ██║
+╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝</div>
+      <span class="section-number">04 / 13</span>
+      <h2 class="section-title">Identity is Portable</h2>
+      <p class="section-subtitle">Containers &amp; Docker</p>
+      <p class="poem">A container carries everything it needs to be itself,<br>regardless of where it lands.<br>You are not your environment. You are what you bring.</p>
+      <p class="prose"><strong>Docker</strong> packages your app and everything it needs into a <strong>container</strong>. Like a shipping container for software: works the same no matter what ship (server) carries it. In production, apps are split into <strong>microservices</strong>: the login system, the payment system, the search. Each runs in its own container.</p>
+      <table class="comparison-table">
+        <thead><tr><th></th><th>Container</th><th>VM</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Virtualizes</strong></td><td>OS (shares kernel)</td><td>Hardware (full guest OS)</td></tr>
+          <tr><td><strong>Startup</strong></td><td>Milliseconds</td><td>Minutes</td></tr>
+          <tr><td><strong>Size</strong></td><td>Megabytes</td><td>Gigabytes</td></tr>
+          <tr><td><strong>Density</strong></td><td>Hundreds/host</td><td>Handful/host</td></tr>
+        </tbody>
+      </table>
+
+      <div class="flow" style="margin-top: var(--sp-sm);">
+        <div class="flow-node wide"><span class="node-title">Physical Server or VPS</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node wide"><span class="node-title">Docker Engine</span><span class="node-desc">Container runtime on Linux</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-row">
+          <div class="flow-node"><span class="node-title">App</span><span class="node-desc">Your code + deps</span></div>
+          <div class="flow-node"><span class="node-title">PostgreSQL</span><span class="node-desc">Database</span></div>
+          <div class="flow-node"><span class="node-title">Redis</span><span class="node-desc">Cache</span></div>
+        </div>
+      </div>
+
+      <details>
+        <summary>Docker Compose + Kubernetes</summary>
+        <div class="detail-body"><strong>docker-compose.yml</strong> defines multi-container apps. One command starts everything. <strong>Kubernetes</strong> (K8s) orchestrates hundreds of containers: auto-scaling, load balancing, self-healing. Managed: AWS EKS, Google GKE, DigitalOcean DOKS.</div>
+      </details>
+      <div class="link-row">
+        <a href="https://www.docker.com/" class="link-pill" target="_blank">Docker</a>
+        <a href="https://hub.docker.com/" class="link-pill" target="_blank">Docker Hub</a>
+        <a href="https://kubernetes.io/" class="link-pill" target="_blank">Kubernetes</a>
+        <a href="https://railway.app/" class="link-pill" target="_blank">Railway</a>
+        <a href="https://fly.io/" class="link-pill" target="_blank">Fly.io</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 05 DATABASES ══ -->
+  <section id="databases">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+██████╗  █████╗ ████████╗ █████╗ ██████╗  █████╗ ███████╗███████╗███████╗
+██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝
+██║  ██║███████║   ██║   ███████║██████╔╝███████║███████╗█████╗  ███████╗
+██║  ██║██╔══██║   ██║   ██╔══██║██╔══██╗██╔══██║╚════██║██╔══╝  ╚════██║
+██████╔╝██║  ██║   ██║   ██║  ██║██████╔╝██║  ██║███████║███████╗███████║
+╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝</div>
+      <span class="section-number">05 / 13</span>
+      <h2 class="section-title">Where Memory Lives</h2>
+      <p class="section-subtitle">Relational, Document, Key-Value, Vector</p>
+      <p class="poem">Every app needs a place to remember.<br>The database is the memory of the machine.<br>Choose the wrong one and the machine forgets.</p>
+      <div class="code-block"><span class="keyword">RELATIONAL (SQL)</span>     <span class="dim">tables, rows, joins, ACID</span>
+  <span class="string">PostgreSQL</span>        <span class="dim">Gold standard. pgvector, PostGIS, pg_cron.</span>
+  <span class="string">MySQL</span>             <span class="dim">Web workhorse. WordPress runs on this.</span>
+  <span class="string">SQLite</span>            <span class="dim">Embedded. File = database. Perfect for edge.</span>
+
+<span class="keyword">DOCUMENT (NoSQL)</span>     <span class="dim">JSON documents, flexible schema</span>
+  <span class="string">MongoDB</span>           <span class="dim">Most popular NoSQL.</span>
+  <span class="string">Firebase</span>          <span class="dim">Google's BaaS. Firestore = realtime docs.</span>
+
+<span class="keyword">KEY-VALUE</span>            <span class="dim">key --> value, extremely fast</span>
+  <span class="string">Redis</span>             <span class="dim">In-memory. Cache, sessions, pub/sub, queues.</span>
+  <span class="string">Valkey</span>            <span class="dim">Open-source Redis fork (post-license change).</span>
+
+<span class="keyword">VECTOR</span>               <span class="dim">similarity search for AI embeddings</span>
+  <span class="string">pgvector</span>          <span class="dim">Postgres extension. Vectors in your existing DB.</span>
+  <span class="string">Pinecone</span>          <span class="dim">Managed vector DB for AI/ML.</span>
+
+<span class="keyword">EDGE / SERVERLESS</span>    <span class="dim">designed for serverless architecture</span>
+  <span class="string">Turso</span>             <span class="dim">SQLite at the edge. LibSQL. Global replicas.</span>
+  <span class="string">Neon</span>              <span class="dim">Serverless PostgreSQL. Scales to zero.</span>
+  <span class="string">D1</span>                <span class="dim">Cloudflare's SQLite at the edge.</span></div>
+      <details>
+        <summary>SQL vs. NoSQL: when to use which</summary>
+        <div class="detail-body"><strong>SQL</strong>: transactions, joins, integrity, structured data. <strong>NoSQL</strong>: flexible schema, nested data, horizontal scaling. Most apps use <strong>both</strong>: PostgreSQL for core data, Redis for cache/sessions.</div>
+      </details>
+      <details>
+        <summary>Connection pooling: the serverless problem</summary>
+        <div class="detail-body">Serverless functions open/close connections per request. 1000 requests = 1000 connections = dead DB. <strong>Poolers</strong> (PgBouncer, Supavisor, Neon proxy) maintain reusable connection pools.</div>
+      </details>
+      <div class="link-row">
+        <a href="https://www.postgresql.org/" class="link-pill" target="_blank">PostgreSQL</a>
+        <a href="https://redis.io/" class="link-pill" target="_blank">Redis</a>
+        <a href="https://turso.tech/" class="link-pill" target="_blank">Turso</a>
+        <a href="https://neon.tech/" class="link-pill" target="_blank">Neon</a>
+        <a href="https://www.mongodb.com/" class="link-pill" target="_blank">MongoDB</a>
+        <a href="https://www.pinecone.io/" class="link-pill" target="_blank">Pinecone</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 06 VPS ══ -->
+  <section id="vps">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+██╗   ██╗██████╗ ███████╗
+██║   ██║██╔══██╗██╔════╝
+██║   ██║██████╔╝███████╗
+╚██╗ ██╔╝██╔═══╝ ╚════██║
+ ╚████╔╝ ██║     ███████║
+  ╚═══╝  ╚═╝     ╚══════╝</div>
+      <span class="section-number">06 / 13</span>
+      <h2 class="section-title">A Room of One's Own</h2>
+      <p class="section-subtitle">Virtual Private Servers &amp; Personal Clouds</p>
+      <p class="poem">Shared hosting is the dormitory.<br>A VPS is your own apartment.<br>The cost of sovereignty is responsibility.</p>
+      <p class="prose">A <strong>VPS</strong> is your own rented computer in the cloud. You get full control: install anything, run anything, 24/7. Anything that needs to stay running (bots, scheduled tasks, databases) lives here.</p>
+      <table class="comparison-table">
+        <thead><tr><th></th><th>Shared</th><th>VPS</th><th>Cloud (AWS)</th><th>Zo.computer</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Control</strong></td><td>cPanel</td><td>Full root SSH</td><td>Full + managed</td><td>Terminal + AI</td></tr>
+          <tr><td><strong>Cost</strong></td><td>$3-15/mo</td><td>$5-80/mo</td><td>$0-10k+/mo</td><td>Free / $15/mo</td></tr>
+          <tr><td><strong>AI built-in</strong></td><td>No</td><td>No</td><td>Separate</td><td>Yes (Claude)</td></tr>
+          <tr><td><strong>Best for</strong></td><td>Blogs</td><td>Apps, APIs</td><td>Enterprise</td><td>Personal AI apps</td></tr>
+        </tbody>
+      </table>
+
+      <details>
+        <summary>Zo.computer: personal cloud with AI</summary>
+        <div class="detail-body"><strong>Zo.computer</strong> is a managed personal server with built-in AI (Claude Sonnet). Free tier: 1 vCPU, 100GB storage, Zo Space (static sites), Zo Hosting (FastAPI/Hono), Zo Files, scheduled tasks. Basic+ ($15/mo): 4 cores, 32GB RAM, always-on, 5 services, 3 custom domains. Fills the gap between VPS and PaaS: one personal server with AI, file storage, and browser UI for management. Best for personal AI apps, automations, and projects that need persistent storage without devops complexity.</div>
+      </details>
+
+      <div class="link-row">
+        <a href="https://zo.computer/" class="link-pill" target="_blank">Zo.computer</a>
+        <a href="https://www.digitalocean.com/" class="link-pill" target="_blank">DigitalOcean</a>
+        <a href="https://www.hetzner.com/" class="link-pill" target="_blank">Hetzner</a>
+        <a href="https://www.vultr.com/" class="link-pill" target="_blank">Vultr</a>
+        <a href="https://www.linode.com/" class="link-pill" target="_blank">Linode</a>
+        <a href="https://lightsail.aws.amazon.com/" class="link-pill" target="_blank">Lightsail</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 07 VERCEL ══ -->
+  <section id="vercel">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+██╗   ██╗███████╗██████╗  ██████╗███████╗██╗
+██║   ██║██╔════╝██╔══██╗██╔════╝██╔════╝██║
+██║   ██║█████╗  ██████╔╝██║     █████╗  ██║
+╚██╗ ██╔╝██╔══╝  ██╔══██╗██║     ██╔══╝  ██║
+ ╚████╔╝ ███████╗██║  ██║╚██████╗███████╗███████╗
+  ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝</div>
+      <span class="section-number">07 / 13</span>
+      <h2 class="section-title">The Disappearing Server</h2>
+      <p class="section-subtitle">Serverless Deployment</p>
+      <p class="poem">Infrastructure should be invisible.<br>Think about what your code does, not where it runs.</p>
+      <p class="prose"><strong>Serverless</strong> means you write code and the platform handles all the servers. No setup, no maintenance. <strong>Vercel</strong> is the leading example: push your code to Git and it's live worldwide in seconds. They built <strong>Next.js</strong>, the most popular React framework.</p>
+      <div class="code-block"><span class="keyword">SERVERLESS</span>  <span class="dim">Node/Python/Go. Cold start 100-1000ms. Full Node API.</span>
+<span class="keyword">EDGE</span>        <span class="dim">V8 isolates. &lt;1ms cold start. 300+ locations. No fs.</span></div>
+      <details>
+        <summary>Alternatives: Netlify, CF Pages, Railway, Fly.io, Render</summary>
+        <div class="detail-body"><strong>Netlify</strong>: similar DX, strong forms/identity. <strong>Cloudflare Pages</strong>: fastest edge, free bandwidth. <strong>Railway</strong>: Docker support, databases, PaaS. <strong>Render</strong>: simple with free tier. <strong>Fly.io</strong>: containers at the edge.</div>
+      </details>
+      <div class="link-row">
+        <a href="https://vercel.com/" class="link-pill" target="_blank">Vercel</a>
+        <a href="https://www.netlify.com/" class="link-pill" target="_blank">Netlify</a>
+        <a href="https://pages.cloudflare.com/" class="link-pill" target="_blank">CF Pages</a>
+        <a href="https://railway.app/" class="link-pill" target="_blank">Railway</a>
+        <a href="https://render.com/" class="link-pill" target="_blank">Render</a>
+        <a href="https://fly.io/" class="link-pill" target="_blank">Fly.io</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 08 SUPABASE ══ -->
+  <section id="supabase">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+███████╗██╗   ██╗██████╗  █████╗ ██████╗  █████╗ ███████╗███████╗
+██╔════╝██║   ██║██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝
+███████╗██║   ██║██████╔╝███████║██████╔╝███████║███████╗█████╗
+╚════██║██║   ██║██╔═══╝ ██╔══██║██╔══██╗██╔══██║╚════██║██╔══╝
+███████║╚██████╔╝██║     ██║  ██║██████╔╝██║  ██║███████║███████╗
+╚══════╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝</div>
+      <span class="section-number">08 / 13</span>
+      <h2 class="section-title">The Old Database, Reborn</h2>
+      <p class="section-subtitle">Backend as a Service</p>
+      <p class="poem">The thirty-year-old relational database is still the best foundation.<br>You just need a better experience around it.</p>
+      <div class="code-block"><span class="keyword">DATABASE</span>        <span class="string">PostgreSQL</span> + pgvector + PostGIS + pg_cron
+<span class="keyword">AUTH</span>            <span class="string">GoTrue</span> -- JWT, OAuth, magic links, phone
+<span class="keyword">REST API</span>        <span class="string">PostgREST</span> -- auto-generated from schema
+<span class="keyword">REALTIME</span>        <span class="string">WAL --> WebSocket</span> -- push DB changes to clients
+<span class="keyword">STORAGE</span>         <span class="string">S3-compatible</span> -- files with Postgres permissions
+<span class="keyword">EDGE FUNCTIONS</span>  <span class="string">Deno-based</span> -- serverless, globally deployed
+<span class="keyword">VECTOR SEARCH</span>   <span class="string">pgvector</span> -- AI/ML similarity search</div>
+      <details>
+        <summary>Row Level Security (RLS)</summary>
+        <div class="detail-body">Auth policies in SQL: "Users read only rows where user_id matches their token." Database enforces security regardless of access method.</div>
+      </details>
+      <details>
+        <summary>Alternatives: Firebase, Appwrite, Convex, PocketBase</summary>
+        <div class="detail-body"><strong>Firebase</strong>: Google, NoSQL, great mobile. <strong>Appwrite</strong>: open-source, self-hostable. <strong>Convex</strong>: reactive DB + server functions. <strong>PocketBase</strong>: single-binary BaaS, SQLite.</div>
+      </details>
+      <div class="link-row">
+        <a href="https://supabase.com/" class="link-pill" target="_blank">Supabase</a>
+        <a href="https://firebase.google.com/" class="link-pill" target="_blank">Firebase</a>
+        <a href="https://appwrite.io/" class="link-pill" target="_blank">Appwrite</a>
+        <a href="https://pocketbase.io/" class="link-pill" target="_blank">PocketBase</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 09 CLOUDFLARE ══ -->
+  <section id="cloudflare">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+ ██████╗██╗      ██████╗ ██╗   ██╗██████╗ ███████╗██╗      █████╗ ██████╗ ███████╗
+██╔════╝██║     ██╔═══██╗██║   ██║██╔══██╗██╔════╝██║     ██╔══██╗██╔══██╗██╔════╝
+██║     ██║     ██║   ██║██║   ██║██║  ██║█████╗  ██║     ███████║██████╔╝█████╗
+██║     ██║     ██║   ██║██║   ██║██║  ██║██╔══╝  ██║     ██╔══██║██╔══██╗██╔══╝
+╚██████╗███████╗╚██████╔╝╚██████╔╝██████╔╝██║     ███████╗██║  ██║██║  ██║███████╗
+ ╚═════╝╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝</div>
+      <span class="section-number">09 / 13</span>
+      <h2 class="section-title">The Invisible Guardian</h2>
+      <p class="section-subtitle">CDN &middot; DDoS &middot; Edge Computing</p>
+      <p class="poem">Most people have never heard of it,<br>but a significant percentage of the internet flows through its hands.</p>
+      <p class="prose">A <strong>CDN</strong> (Content Delivery Network) stores copies of your site on servers worldwide so users load the closest copy. <strong>DDoS protection</strong> blocks attacks that try to flood your site with fake traffic. <strong>Cloudflare</strong> does both: 330+ data centers, 120+ countries, sitting between users and your server like a bouncer.</p>
+      <div class="code-block"><span class="keyword">CDN</span>             <span class="dim">Cache assets globally. Latency: hundreds ms --> single digits.</span>
+<span class="keyword">DDOS</span>            <span class="dim">L3/L4/L7 protection. Absorbs attacks across the network.</span>
+<span class="keyword">WORKERS</span>         <span class="dim">V8 isolates. &lt;1ms cold start. Code on every datacenter.</span>
+<span class="keyword">KV</span>              <span class="dim">Global key-value store.</span>
+<span class="keyword">D1</span>              <span class="dim">SQLite at the edge (up to 10GB).</span>
+<span class="keyword">R2</span>              <span class="dim">S3-compatible storage, zero egress fees.</span>
+<span class="keyword">ZERO TRUST</span>      <span class="dim">Replaces VPN. Identity-based access.</span></div>
+      <div class="link-row">
+        <a href="https://www.cloudflare.com/" class="link-pill" target="_blank">Cloudflare</a>
+        <a href="https://www.fastly.com/" class="link-pill" target="_blank">Fastly</a>
+        <a href="https://aws.amazon.com/cloudfront/" class="link-pill" target="_blank">CloudFront</a>
+        <a href="https://bunny.net/" class="link-pill" target="_blank">Bunny CDN</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 10 MCP ══ -->
+  <section id="mcp">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+███╗   ███╗ ██████╗██████╗
+████╗ ████║██╔════╝██╔══██╗
+██╔████╔██║██║     ██████╔╝
+██║╚██╔╝██║██║     ██╔═══╝
+██║ ╚═╝ ██║╚██████╗██║
+╚═╝     ╚═╝ ╚═════╝╚═╝</div>
+      <span class="section-number">10 / 13</span>
+      <h2 class="section-title">Giving Intelligence Hands</h2>
+      <p class="section-subtitle">Model Context Protocol</p>
+      <p class="poem">A mind without the ability to act is just a voice in a room.<br>MCP lets AI reach through the screen and touch the systems where real work happens.</p>
+      <p class="prose"><strong>MCP</strong> is how AI connects to the real world. Like USB-C is one plug for all devices, MCP is one standard for AI to use any tool: read files, query databases, browse the web, send emails. Created by Anthropic, now governed by the <strong>Agentic AI Foundation</strong> under the Linux Foundation.</p>
+
+      <div class="flow" style="margin-top: var(--sp-sm);">
+        <div class="flow-row">
+          <div class="flow-node"><span class="node-title">Host App</span><span class="node-desc">Claude Code / VS Code</span></div>
+          <div class="flow-node accent"><span class="node-title">MCP Client</span><span class="node-desc">JSON-RPC 2.0</span></div>
+          <div class="flow-node"><span class="node-title">MCP Server</span><span class="node-desc">Tools + Resources</span></div>
+        </div>
+      </div>
+
+      <div class="link-row">
+        <a href="https://modelcontextprotocol.io/" class="link-pill" target="_blank">MCP Spec</a>
+        <a href="https://github.com/modelcontextprotocol/servers" class="link-pill" target="_blank">MCP Servers</a>
+        <a href="https://glama.ai/mcp/servers" class="link-pill" target="_blank">Directory</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 11 AI ══ -->
+  <section id="ai">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+ █████╗ ██╗       ██╗██████╗     ████████╗██╗  ██╗███████╗    ██╗    ██╗███████╗██████╗
+██╔══██╗██║      ██╔╝╚════██╗    ╚══██╔══╝██║  ██║██╔════╝    ██║    ██║██╔════╝██╔══██╗
+███████║██║     ██╔╝  █████╔╝       ██║   ███████║█████╗      ██║ █╗ ██║█████╗  ██████╔╝
+██╔══██║██║    ██╔╝  ██╔═══╝        ██║   ██╔══██║██╔══╝      ██║███╗██║██╔══╝  ██╔══██╗
+██║  ██║██║   ██╔╝   ███████╗       ██║   ██║  ██║███████╗    ╚███╔███╔╝███████╗██████╔╝
+╚═╝  ╚═╝╚═╝   ╚═╝    ╚══════╝       ╚═╝   ╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚══════╝╚═════╝</div>
+      <span class="section-number">11 / 13</span>
+      <h2 class="section-title">A Brain in a Jar No More</h2>
+      <p class="section-subtitle">How AI Connects to the Internet</p>
+      <p class="poem">An AI without tools is a brain in a jar.<br>Tool use bridges intelligence and agency.<br>Every tool we give it is a vote of trust.</p>
+      <div class="code-block"><span class="comment">// The tool-use loop</span>
+<span class="keyword">1. DEFINE</span>     <span class="dim">Developer lists tools with schemas</span>
+<span class="keyword">2. DECIDE</span>     <span class="dim">Model outputs structured call:</span>
+               <span class="string">{ "tool": "read_file", "path": "/src/app.ts" }</span>
+<span class="keyword">3. EXECUTE</span>    <span class="dim">Host runs function, sends result back</span>
+<span class="keyword">4. SYNTHESIZE</span>  <span class="dim">Model incorporates data into response</span>
+
+<span class="keyword">INFERENCE PROVIDERS</span>
+  <span class="string">Anthropic</span>  <span class="dim">Claude. Opus, Sonnet, Haiku.</span>
+  <span class="string">OpenAI</span>     <span class="dim">GPT. o-series reasoning.</span>
+  <span class="string">Google</span>     <span class="dim">Gemini. Multimodal native.</span>
+  <span class="string">Groq</span>       <span class="dim">Custom LPU. Ultra-low latency.</span>
+  <span class="string">Together</span>   <span class="dim">Open-source models hosted.</span></div>
+      <div class="link-row">
+        <a href="https://www.anthropic.com/" class="link-pill" target="_blank">Anthropic</a>
+        <a href="https://openai.com/" class="link-pill" target="_blank">OpenAI</a>
+        <a href="https://deepmind.google/" class="link-pill" target="_blank">Google</a>
+        <a href="https://groq.com/" class="link-pill" target="_blank">Groq</a>
+        <a href="https://together.ai/" class="link-pill" target="_blank">Together AI</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 12 THE STACK ══ -->
+  <section id="stack">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+████████╗██╗  ██╗███████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
+╚══██╔══╝██║  ██║██╔════╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
+   ██║   ███████║█████╗      ███████╗   ██║   ███████║██║     █████╔╝
+   ██║   ██╔══██║██╔══╝      ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
+   ██║   ██║  ██║███████╗    ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
+   ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝</div>
+      <span class="section-number">12 / 13</span>
+      <h2 class="section-title">A Cathedral Built by Strangers</h2>
+      <p class="section-subtitle">The Modern Web Stack</p>
+      <p class="poem">No single company designed it.<br>Each layer trusts the layer below.<br>The infrastructure became invisible so the ideas could become visible.</p>
+
+      <div style="margin-bottom: var(--sp-md);">
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>USER</span><span class="layer-desc">Browser / app. Types URL. HTTPS request.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>DNS</span><span class="layer-desc">Domain to IP. Cloudflare / Route 53.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>CDN</span><span class="layer-desc">Cloudflare / Fastly. Cache + DDoS + SSL.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>HOSTING</span><span class="layer-desc">Vercel / Netlify / CF Pages. Edge + serverless.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>BACKEND</span><span class="layer-desc">Supabase / Firebase. DB + Auth + Realtime.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>DATABASE</span><span class="layer-desc">PostgreSQL / Redis / SQLite.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>STORAGE</span><span class="layer-desc">S3 / R2 / Supabase Storage.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>APIs</span><span class="layer-desc">Stripe / Resend / Claude / Algolia.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>COMPUTE</span><span class="layer-desc">VPS / Railway / Zo. Bots, cron, workers.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>AI + MCP</span><span class="layer-desc">Model APIs. MCP servers. Agents.</span></div>
+        <div class="stack-layer"><span class="layer-name"><span class="glow-dot"></span>GITHUB</span><span class="layer-desc">Source of truth. CI/CD. Everything starts here.</span></div>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ 13 HIDDEN SERVICES ══ -->
+  <section id="hidden">
+    <div class="wrap section-inner">
+      <span class="section-number">13 / 13</span>
+      <h2 class="section-title">What Most People Never See</h2>
+      <p class="section-subtitle">The Services Behind the Services</p>
+      <p class="poem">You click a button. Fourteen services wake up.<br>You see a page. You have no idea what just happened.</p>
+
+      <div class="code-block"><span class="keyword">DOMAIN</span>          <a href="https://www.namecheap.com/" target="_blank" class="string">Namecheap</a>  <a href="https://www.cloudflare.com/products/registrar/" target="_blank" class="string">Cloudflare</a>  <a href="https://porkbun.com/" target="_blank" class="string">Porkbun</a>
+<span class="keyword">DNS</span>             <a href="https://www.cloudflare.com/dns/" target="_blank" class="string">Cloudflare DNS</a>  <a href="https://aws.amazon.com/route53/" target="_blank" class="string">Route 53</a>  Vercel DNS
+<span class="keyword">SSL</span>             <a href="https://letsencrypt.org/" target="_blank" class="string">Let's Encrypt</a>  Cloudflare auto  Vercel auto
+<span class="keyword">CDN</span>             <a href="https://www.cloudflare.com/" target="_blank" class="string">Cloudflare</a>  <a href="https://www.fastly.com/" target="_blank" class="string">Fastly</a>  <a href="https://bunny.net/" target="_blank" class="string">Bunny</a>
+<span class="keyword">HOSTING</span>         <a href="https://vercel.com/" target="_blank" class="string">Vercel</a>  <a href="https://www.netlify.com/" target="_blank" class="string">Netlify</a>  <a href="https://railway.app/" target="_blank" class="string">Railway</a>  <a href="https://zo.computer/" target="_blank" class="string">Zo</a>
+<span class="keyword">DATABASE</span>        <a href="https://supabase.com/" target="_blank" class="string">Supabase</a>  <a href="https://neon.tech/" target="_blank" class="string">Neon</a>  <a href="https://turso.tech/" target="_blank" class="string">Turso</a>  <a href="https://planetscale.com/" target="_blank" class="string">PlanetScale</a>
+<span class="keyword">AUTH</span>            <a href="https://supabase.com/auth" target="_blank" class="string">Supabase Auth</a>  <a href="https://clerk.com/" target="_blank" class="string">Clerk</a>  <a href="https://auth0.com/" target="_blank" class="string">Auth0</a>
+<span class="keyword">STORAGE</span>         <a href="https://aws.amazon.com/s3/" target="_blank" class="string">S3</a>  <a href="https://developers.cloudflare.com/r2/" target="_blank" class="string">R2</a>  Supabase Storage
+<span class="keyword">EMAIL</span>           <a href="https://resend.com/" target="_blank" class="string">Resend</a>  <a href="https://postmarkapp.com/" target="_blank" class="string">Postmark</a>  <a href="https://sendgrid.com/" target="_blank" class="string">SendGrid</a>
+<span class="keyword">PAYMENTS</span>        <a href="https://stripe.com/" target="_blank" class="string">Stripe</a>  <a href="https://www.lemonsqueezy.com/" target="_blank" class="string">LemonSqueezy</a>  <a href="https://paddle.com/" target="_blank" class="string">Paddle</a>
+<span class="keyword">ANALYTICS</span>       <a href="https://posthog.com/" target="_blank" class="string">PostHog</a>  <a href="https://plausible.io/" target="_blank" class="string">Plausible</a>  <a href="https://mixpanel.com/" target="_blank" class="string">Mixpanel</a>
+<span class="keyword">ERRORS</span>          <a href="https://sentry.io/" target="_blank" class="string">Sentry</a>  <a href="https://logrocket.com/" target="_blank" class="string">LogRocket</a>
+<span class="keyword">CI/CD</span>           <a href="https://docs.github.com/en/actions" target="_blank" class="string">GitHub Actions</a>  Vercel auto  <a href="https://circleci.com/" target="_blank" class="string">CircleCI</a>
+<span class="keyword">AI</span>              <a href="https://www.anthropic.com/" target="_blank" class="string">Anthropic</a>  <a href="https://openai.com/" target="_blank" class="string">OpenAI</a>  <a href="https://groq.com/" target="_blank" class="string">Groq</a>
+<span class="keyword">AI TOOLS</span>        <a href="https://modelcontextprotocol.io/" target="_blank" class="string">MCP</a>  function calling  agent frameworks
+<span class="keyword">CONTAINERS</span>      <a href="https://hub.docker.com/" target="_blank" class="string">Docker Hub</a>  GHCR
+<span class="keyword">SECRETS</span>         Env vars  <a href="https://www.doppler.com/" target="_blank" class="string">Doppler</a>  <a href="https://infisical.com/" target="_blank" class="string">Infisical</a>
+<span class="keyword">MONITORING</span>      <a href="https://grafana.com/" target="_blank" class="string">Grafana</a>  <a href="https://www.datadoghq.com/" target="_blank" class="string">Datadog</a>  <a href="https://betteruptime.com/" target="_blank" class="string">Better Uptime</a>
+<span class="keyword">QUEUES</span>          <a href="https://upstash.com/" target="_blank" class="string">Upstash</a>  <a href="https://inngest.com/" target="_blank" class="string">Inngest</a>  <a href="https://trigger.dev/" target="_blank" class="string">Trigger.dev</a></div>
+
+      <p class="prose" style="margin-top: var(--sp-sm);">A "simple" web app touches <strong>12+</strong> of these. The modern internet is a distributed system held together by APIs, trust, and YAML.</p>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+
+  <!-- ══ AI AGENT STACK ══ -->
+  <section id="agents">
+    <div class="wrap section-inner">
+      <div class="ascii-block" aria-hidden="true">
+ █████╗  ██████╗ ███████╗███╗   ██╗████████╗███████╗
+██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝██╔════╝
+███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║   ███████╗
+██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║   ╚════██║
+██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║   ███████║
+╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝</div>
+      <span class="section-number">12 / 14</span>
+      <h2 class="section-title">What Agents Need</h2>
+      <p class="section-subtitle">The AI Agent Stack</p>
+      <p class="poem">An agent is not just a model.<br>It is a model with memory, tools, and a plan.</p>
+      <p class="prose">As vibecoders let AI write their code, the AI itself needs infrastructure. A modern AI agent depends on an entire stack of services to function. Here is what powers them.</p>
+
+      <div class="code-block"><span class="keyword">INFERENCE</span>        <span class="dim">The brain. Where the model runs.</span>
+  <span class="string">Anthropic API</span>  <span class="dim">Claude Opus / Sonnet / Haiku</span>
+  <span class="string">OpenAI API</span>     <span class="dim">GPT-4o / o3 / o4-mini</span>
+  <span class="string">Groq</span>           <span class="dim">Custom LPU. Sub-100ms latency.</span>
+  <span class="string">Together AI</span>    <span class="dim">Open models: Llama, Mistral, Qwen.</span>
+  <span class="string">Ollama</span>         <span class="dim">Run models locally on your machine.</span>
+
+<span class="keyword">TOOLS (MCP)</span>      <span class="dim">The hands. How the agent acts on the world.</span>
+  <span class="string">MCP Registry</span>   <span class="dim">registry.modelcontextprotocol.io — official catalog</span>
+  <span class="string">Glama</span>          <span class="dim">glama.ai/mcp/servers — community directory</span>
+  <span class="string">Smithery</span>       <span class="dim">smithery.ai — MCP server marketplace</span>
+  <span class="string">Composio</span>       <span class="dim">composio.dev — 250+ tool integrations</span>
+  <span class="string">Skills.sh</span>      <span class="dim">skills.sh — portable agent skills</span>
+
+<span class="keyword">MEMORY</span>           <span class="dim">Context that persists across conversations.</span>
+  <span class="string">pgvector</span>       <span class="dim">Vector embeddings in PostgreSQL</span>
+  <span class="string">Pinecone</span>       <span class="dim">Managed vector DB for RAG</span>
+  <span class="string">Mem0</span>           <span class="dim">mem0.ai — memory layer for agents</span>
+  <span class="string">Qdrant</span>         <span class="dim">Open-source vector search</span>
+
+<span class="keyword">SANDBOXES</span>        <span class="dim">Safe execution environments for agent code.</span>
+  <span class="string">E2B</span>            <span class="dim">e2b.dev — cloud sandboxes for AI agents</span>
+  <span class="string">Browserbase</span>    <span class="dim">browserbase.com — headless browsers for agents</span>
+  <span class="string">Modal</span>          <span class="dim">modal.com — serverless GPU/CPU for agents</span>
+
+<span class="keyword">ORCHESTRATION</span>    <span class="dim">Managing multi-step, multi-agent workflows.</span>
+  <span class="string">Claude Code</span>    <span class="dim">CLI agent with full tool use (built this page)</span>
+  <span class="string">Vercel AI SDK</span>  <span class="dim">TypeScript framework for AI apps</span>
+  <span class="string">LangChain</span>      <span class="dim">Python/JS chain-based orchestration</span>
+  <span class="string">CrewAI</span>         <span class="dim">Multi-agent collaboration framework</span>
+  <span class="string">AutoGen</span>        <span class="dim">Microsoft's multi-agent conversations</span>
+
+<span class="keyword">CODING AGENTS</span>    <span class="dim">AI that writes and deploys code.</span>
+  <span class="string">Claude Code</span>    <span class="dim">Anthropic's CLI. Opus/Sonnet. MCP native.</span>
+  <span class="string">Cursor</span>         <span class="dim">AI-first IDE. Tab completion + chat.</span>
+  <span class="string">GitHub Copilot</span> <span class="dim">In-editor AI. Workspace agent.</span>
+  <span class="string">Bolt.new</span>       <span class="dim">Browser IDE. Prompt to full-stack app.</span>
+  <span class="string">Lovable</span>        <span class="dim">AI frontend builder. Natural language.</span></div>
+
+      <div class="flow">
+        <div class="flow-node wide accent"><span class="node-title">AI Agent</span><span class="node-desc">Claude Code / Cursor / Custom</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-row">
+          <div class="flow-node"><span class="node-title">Inference</span><span class="node-desc">Anthropic / OpenAI</span></div>
+          <div class="flow-node"><span class="node-title">MCP Tools</span><span class="node-desc">File, DB, Web, API</span></div>
+          <div class="flow-node"><span class="node-title">Memory</span><span class="node-desc">Vectors / Context</span></div>
+          <div class="flow-node"><span class="node-title">Sandbox</span><span class="node-desc">E2B / Browser</span></div>
+        </div>
+      </div>
+
+      <div class="link-row">
+        <a href="https://registry.modelcontextprotocol.io/" class="link-pill" target="_blank">MCP Registry</a>
+        <a href="https://glama.ai/mcp/servers" class="link-pill" target="_blank">Glama</a>
+        <a href="https://smithery.ai/" class="link-pill" target="_blank">Smithery</a>
+        <a href="https://skills.sh/" class="link-pill" target="_blank">Skills.sh</a>
+        <a href="https://composio.dev/" class="link-pill" target="_blank">Composio</a>
+        <a href="https://e2b.dev/" class="link-pill" target="_blank">E2B</a>
+        <a href="https://mem0.ai/" class="link-pill" target="_blank">Mem0</a>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+  <!-- ══ RELATIONSHIP MAP ══ -->
+  <section style="padding-top: 0;">
+    <div class="wrap section-inner">
+      <p class="section-subtitle text-center mb-sm">How They All Relate</p>
+      <div class="flow">
+        <div class="flow-node wide"><span class="node-title">Developer's Machine</span><span class="node-desc">code --> git commit --> git push</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node wide accent"><span class="node-title">GitHub</span><span class="node-desc">Source of truth / CI / CD / Actions</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-row">
+          <div class="flow-node"><span class="node-title">Vercel / Netlify</span><span class="node-desc">Frontend + API</span></div>
+          <div class="flow-node"><span class="node-title">Railway / VPS / Zo</span><span class="node-desc">Backend + Docker</span></div>
+        </div>
+        <div class="flow-branch"></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node wide"><span class="node-title">Supabase / Neon</span><span class="node-desc">PostgreSQL + Auth + Realtime + Storage</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-row">
+          <div class="flow-node"><span class="node-title">Stripe</span><span class="node-desc">Payments</span></div>
+          <div class="flow-node"><span class="node-title">Resend</span><span class="node-desc">Email</span></div>
+          <div class="flow-node"><span class="node-title">Claude / MCP</span><span class="node-desc">AI + Tools</span></div>
+          <div class="flow-node"><span class="node-title">PostHog</span><span class="node-desc">Analytics</span></div>
+          <div class="flow-node"><span class="node-title">Sentry</span><span class="node-desc">Errors</span></div>
+        </div>
+      </div>
+      <p style="text-align:center; font-size:0.55rem; color:var(--gray-600); margin-top: var(--sp-sm);">ALL TRAFFIC FLOWS THROUGH CLOUDFLARE (CDN + DNS + WAF)</p>
+    </div>
+  </section>
+
+
+  <!-- ══ FOOTER ══ -->
+  <div class="marquee-track" aria-hidden="true">
+    <span class="marquee-content">THE INFRASTRUCTURE BECAME INVISIBLE SO THE IDEAS COULD BECOME VISIBLE ... THE INFRASTRUCTURE BECAME INVISIBLE SO THE IDEAS COULD BECOME VISIBLE ... THE INFRASTRUCTURE BECAME INVISIBLE SO THE IDEAS COULD BECOME VISIBLE ... THE INFRASTRUCTURE BECAME INVISIBLE SO THE IDEAS COULD BECOME VISIBLE ...</span>
+  </div>
+
+  <footer class="footer-99">
+    <div class="ascii-block" style="display:inline-block; text-align:center; font-size: 0.35rem;" aria-hidden="true">
+███████╗██╗  ██╗██╗  ██╗██╗   ██╗███╗   ███╗ █████╗ ███╗   ██╗
+██╔════╝╚██╗██╔╝██║  ██║██║   ██║████╗ ████║██╔══██╗████╗  ██║
+█████╗   ╚███╔╝ ███████║██║   ██║██╔████╔██║███████║██╔██╗ ██║
+██╔══╝   ██╔██╗ ██╔══██║██║   ██║██║╚██╔╝██║██╔══██║██║╚██╗██║
+███████╗██╔╝ ██╗██║  ██║╚██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝</div>
+    <br>
+    <p style="font-family: var(--font-serif); font-size: clamp(0.7rem, 1.1vw, 0.9rem); font-style: italic; color: var(--orange-400); letter-spacing: 1px; margin-bottom: var(--sp-sm);">&#10047;&#8902;&#65377;&#729;Romanticizing&#8346;&#8728; &#729;AI tech&#8346;&#8728; &#729;blockchain&#65377;&#729;&#8902;&#65377;and&#65377;&#8902;&#729;prediction&#8902;&#65377;&#729;markets&#8902;&#65377;&#729; &#10023;</p>
+    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; margin-bottom: var(--sp-md);">
+      <a href="https://x.com/3xhuman" target="_blank" class="link-pill">X / @3xhuman</a>
+      <a href="https://github.com/exhuman777" target="_blank" class="link-pill">GitHub</a>
+      <a href="https://o.zo.space/" target="_blank" class="link-pill">Zo</a>
+      <a href="https://exhuman.neocities.org/" target="_blank" class="link-pill">Neocities</a>
+    </div>
+    <div class="visitor-counter">VISITORS: <span id="visitorCount">000,000</span><span class="blink">_</span></div>
+    <p class="best-viewed">best viewed at 1024x768 &middot; optimized for netscape navigator 4.0</p>
+    <p class="construction">&lt;/&gt; assembled by a penguin and a human &middot; 2026</p>
+    <p style="margin-top: var(--sp-sm); font-size: 0.5rem;"><a href="#top" style="color: var(--gray-600); border: none;">^ top</a></p>
+  </footer>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [], blobs = [], w, h, animId;
+  const COLORS = [{r:255,g:179,b:128},{r:232,g:149,b:106},{r:255,g:204,b:153},{r:255,g:153,b:102},{r:208,g:120,b:80}];
+  function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;}
+  resize(); addEventListener('resize',resize);
+  for(let i=0;i<60;i++){const l=Math.random(),c=COLORS[Math.floor(Math.random()*COLORS.length)];particles.push({x:Math.random()*w,y:Math.random()*h,z:l,size:1+l*3,vx:(Math.random()-0.5)*0.2*(0.3+l*0.7),vy:(Math.random()-0.5)*0.15*(0.3+l*0.7),r:c.r,g:c.g,b:c.b,pulse:Math.random()*Math.PI*2,ps:0.003+Math.random()*0.008});}
+  for(let i=0;i<4;i++){const c=COLORS[i%COLORS.length];blobs.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*0.1,vy:(Math.random()-0.5)*0.08,radius:180+Math.random()*220,r:c.r,g:c.g,b:c.b});}
+  function animate(){
+    ctx.clearRect(0,0,w,h);
+    for(const b of blobs){b.x+=b.vx;b.y+=b.vy;if(b.x<-b.radius)b.x=w+b.radius;if(b.x>w+b.radius)b.x=-b.radius;if(b.y<-b.radius)b.y=h+b.radius;if(b.y>h+b.radius)b.y=-b.radius;const g=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.radius);g.addColorStop(0,`rgba(${b.r},${b.g},${b.b},0.08)`);g.addColorStop(1,`rgba(${b.r},${b.g},${b.b},0)`);ctx.fillStyle=g;ctx.fillRect(b.x-b.radius,b.y-b.radius,b.radius*2,b.radius*2);}
+    for(let i=0;i<particles.length;i++){for(let j=i+1;j<particles.length;j++){const a=particles[i],b=particles[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);if(d<120){ctx.strokeStyle=`rgba(${a.r},${a.g},${a.b},${(1-d/120)*0.12*(a.z+b.z)/2})`;ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}}
+    for(const p of particles){p.x+=p.vx;p.y+=p.vy;p.pulse+=p.ps;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;const o=0.3+Math.sin(p.pulse)*0.15,s=p.size*(0.9+Math.sin(p.pulse)*0.1);ctx.globalAlpha=o*0.5;ctx.fillStyle=`rgb(${p.r},${p.g},${p.b})`;ctx.shadowColor=`rgb(${p.r},${p.g},${p.b})`;ctx.shadowBlur=s*3;ctx.beginPath();ctx.arc(p.x,p.y,s,0,Math.PI*2);ctx.fill();ctx.globalAlpha=o;ctx.shadowBlur=0;ctx.beginPath();ctx.arc(p.x,p.y,s*0.5,0,Math.PI*2);ctx.fill();}
+    ctx.globalAlpha=1;ctx.shadowBlur=0;animId=requestAnimationFrame(animate);
+  }
+  if(document.visibilityState==='visible')animate();
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!animId)animate();else if(document.visibilityState==='hidden'){cancelAnimationFrame(animId);animId=null;}});
+  const c=document.getElementById('visitorCount');if(c){let n=parseInt(localStorage.getItem('ia-v')||'7842',10);n+=Math.floor(Math.random()*3)+1;localStorage.setItem('ia-v',n.toString());c.textContent=n.toString().padStart(7,'0');}
+  // ── Comet cursor with big American star on catch-up ──
+  const trail=[], TL=35, tc=document.createElement('canvas');
+  tc.style.cssText='position:fixed;inset:0;z-index:9999;pointer-events:none;';
+  document.body.appendChild(tc);
+  const tC=tc.getContext('2d');
+  let mx=0, my=0, lastMoveT=0, speed=0;
+  let starScale=0; // animated scale (0=hidden, 1=full burst, 0.5=idle resting)
+  let catchTime=0; // when comet first caught the cursor
+  let wasCaught=false;
+  function rt(){tc.width=innerWidth;tc.height=innerHeight;}rt();addEventListener('resize',rt);
+  document.addEventListener('mousemove',e=>{
+    const now=Date.now(), dt=now-lastMoveT||16;
+    const dx=e.clientX-mx, dy=e.clientY-my;
+    speed=Math.sqrt(dx*dx+dy*dy)/(dt/16);
+    mx=e.clientX; my=e.clientY; lastMoveT=now;
+    trail.push({x:e.clientX,y:e.clientY,t:now});
+    if(trail.length>TL)trail.shift();
+  });
+
+  function drawStar(cx,cy,spikes,outerR,innerR,rot){
+    tC.beginPath();
+    for(let i=0;i<spikes*2;i++){
+      const r=i%2===0?outerR:innerR;
+      const a=rot+(i*Math.PI/spikes)-Math.PI/2;
+      if(i===0)tC.moveTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);
+      else tC.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);
+    }
+    tC.closePath();
+  }
+
+  function dtLoop(){
+    tC.clearRect(0,0,tc.width,tc.height);
+    const n=Date.now();
+    const timeSinceMove=n-lastMoveT;
+
+    // Detect if comet caught up (mouse stopped or very slow)
+    const caught=timeSinceMove>120||speed<1.5;
+
+    // Track when catch first happens
+    if(caught&&!wasCaught){ catchTime=n; wasCaught=true; }
+    if(!caught){ wasCaught=false; }
+
+    // Target: 0=moving fast, 1=just caught (burst), 0.5=idle resting after 2s
+    let target=0;
+    if(caught){
+      const sinceCatch=n-catchTime;
+      if(sinceCatch<1000) target=1; // full burst for 1 second
+      else target=0.45; // shrink to less than half after 1s
+    }
+    // Smooth animation - fast expand, slower shrink
+    const lerpSpeed=target>starScale?0.1:0.04;
+    starScale+=(target-starScale)*lerpSpeed;
+
+    // Draw comet tail
+    const alive=trail.filter(p=>n-p.t<700);
+    if(alive.length>1){
+      for(let i=1;i<alive.length;i++){
+        const p=alive[i], prev=alive[i-1];
+        const progress=i/alive.length;
+        const age=n-p.t;
+        const fade=(1-age/700)*progress;
+        const thickness=0.4+progress*4;
+        const r=255, g=Math.round(130+progress*100), b=Math.round(40+progress*100);
+        // Core line
+        tC.beginPath();
+        tC.moveTo(prev.x,prev.y);
+        tC.lineTo(p.x,p.y);
+        tC.strokeStyle=`rgba(${r},${g},${b},${fade*0.7})`;
+        tC.lineWidth=thickness;
+        tC.lineCap='round';
+        tC.stroke();
+        // Outer glow
+        tC.beginPath();
+        tC.moveTo(prev.x,prev.y);
+        tC.lineTo(p.x,p.y);
+        tC.strokeStyle=`rgba(${r},${g},${b},${fade*0.12})`;
+        tC.lineWidth=thickness*5;
+        tC.stroke();
+      }
+    }
+
+    // Small comet head glow (always visible)
+    const grd=tC.createRadialGradient(mx,my,0,mx,my,14);
+    grd.addColorStop(0,'rgba(255,255,255,0.3)');
+    grd.addColorStop(0.4,'rgba(255,200,140,0.1)');
+    grd.addColorStop(1,'rgba(255,153,102,0)');
+    tC.fillStyle=grd;
+    tC.beginPath();tC.arc(mx,my,14,0,Math.PI*2);tC.fill();
+
+    // Small spinning star always at cursor tip
+    const rot=n*0.0012;
+    tC.save();
+    tC.shadowColor='rgba(255,255,255,0.6)';
+    tC.shadowBlur=6;
+    drawStar(mx,my,5,5,2,rot);
+    tC.fillStyle='rgba(255,255,255,0.85)';
+    tC.fill();
+    tC.restore();
+
+    // ── BIG American star appears when comet catches mouse ──
+    if(starScale>0.02){
+      const s=starScale;
+      const bigR=4+s*15; // burst ~19px, idle ~11px
+      const bigIR=bigR*0.42;
+      const bigRot=n*0.0005; // slower majestic spin
+      const pulse=1+Math.sin(n*0.004)*0.06; // subtle breathing
+
+      tC.save();
+      tC.globalAlpha=s;
+
+      // Outer rays / burst
+      const burstR=bigR*2.2*pulse;
+      const bgrd=tC.createRadialGradient(mx,my,bigR*0.3,mx,my,burstR);
+      bgrd.addColorStop(0,'rgba(255,220,160,0.25)');
+      bgrd.addColorStop(0.5,'rgba(255,180,100,0.06)');
+      bgrd.addColorStop(1,'rgba(255,153,102,0)');
+      tC.fillStyle=bgrd;
+      tC.beginPath();tC.arc(mx,my,burstR,0,Math.PI*2);tC.fill();
+
+      // Star shadow/glow
+      tC.shadowColor='rgba(255,200,120,0.9)';
+      tC.shadowBlur=20*s;
+
+      // Main big star - white with warm edge
+      drawStar(mx,my,5,bigR*pulse,bigIR*pulse,bigRot);
+      const sgrd=tC.createRadialGradient(mx,my,0,mx,my,bigR);
+      sgrd.addColorStop(0,'rgba(255,255,255,1)');
+      sgrd.addColorStop(0.6,'rgba(255,240,220,0.95)');
+      sgrd.addColorStop(1,'rgba(255,200,140,0.8)');
+      tC.fillStyle=sgrd;
+      tC.fill();
+
+      // Inner crisp white star
+      tC.shadowBlur=0;
+      drawStar(mx,my,5,bigR*0.6*pulse,bigIR*0.5*pulse,bigRot);
+      tC.fillStyle='rgba(255,255,255,1)';
+      tC.fill();
+
+      tC.restore();
+    }
+
+    requestAnimationFrame(dtLoop);
+  }
+  dtLoop();
+
+  // ── Slot Machine ──
+  const slotItems = [
+    'DNS','SSL/TLS','CDN','DDoS','Cloudflare','Vercel','Railway',
+    'PostgreSQL','Redis','Docker','Kubernetes','GitHub Actions',
+    'Supabase','Auth','JWT','OAuth','WebSockets','API Gateway',
+    'CORS','Rate Limit','Cron Jobs','MCP','AI Inference',
+    'Edge Runtime','Serverless','S3 Storage','Webhooks','YAML',
+    'Secrets Mgr','PgBouncer','Vector DB','Feature Flags',
+    'Analytics','Sentry','PostHog','Stripe','Resend','CI/CD',
+    'Load Balancer','Firewall','TCP/IP','gRPC','GraphQL','REST'
+  ];
+  const jackpots = [
+    'DNS resolved. SSL handshook. CDN cached. You never saw a thing.',
+    'Three services aligned. Your page loaded in 200ms. Lucky spin.',
+    'The database answered. The cache hit. The user never waited.',
+    'Forty-seven services. One page load. Zero awareness. That is the house edge.',
+    'Every click is a prayer to the infrastructure gods.',
+    'The API responded. The webhook fired. The cron job ran. Jackpot.',
+    'You typed a URL. Thirty services gambled your request would land.',
+    'SSL negotiated in 50ms. Nobody clapped. Nobody ever does.',
+    'The container spun up. The function executed. The CDN served. Invisible.',
+    'MCP connected. The agent acted. The tools responded. AI touched the real world.'
+  ];
+
+  function initSlots(){
+    for(let r=1;r<=3;r++){
+      const strip=document.querySelector('#reel'+r+' .slot-strip');
+      // Fill with shuffled items (3x for smooth looping)
+      const shuffled=[...slotItems].sort(()=>Math.random()-0.5);
+      const all=[...shuffled,...shuffled,...shuffled];
+      strip.innerHTML='';
+      all.forEach(txt=>{
+        const d=document.createElement('div');
+        d.className='slot-item';
+        d.textContent=txt;
+        strip.appendChild(d);
+      });
+    }
+  }
+  initSlots();
+
+  let spinning=false;
+  document.getElementById('slotPull').addEventListener('click',()=>{
+    if(spinning)return;
+    spinning=true;
+    const jp=document.getElementById('slotJackpot');
+    jp.classList.remove('visible');
+
+    for(let r=1;r<=3;r++){
+      const strip=document.querySelector('#reel'+r+' .slot-strip');
+      const itemH=strip.firstChild.offsetHeight||35;
+      const total=strip.children.length;
+      // Random landing position in middle third
+      const landIdx=slotItems.length+Math.floor(Math.random()*slotItems.length);
+      const targetY=-(landIdx*itemH);
+      // Spin: fast then decelerate, staggered stop
+      strip.style.transition='none';
+      strip.style.transform='translateY(0)';
+      requestAnimationFrame(()=>{
+        strip.style.transition='transform '+(1.5+r*0.4)+'s cubic-bezier(0.15,0.85,0.3,1)';
+        strip.style.transform='translateY('+targetY+'px)';
+      });
+      // Highlight landed item
+      setTimeout(()=>{
+        const items=strip.querySelectorAll('.slot-item');
+        items.forEach(i=>i.classList.remove('hot'));
+        if(items[landIdx])items[landIdx].classList.add('hot');
+        if(r===3){
+          spinning=false;
+          jp.textContent=jackpots[Math.floor(Math.random()*jackpots.length)];
+          jp.classList.add('visible');
+        }
+      },(1.5+r*0.4)*1000+50);
+    }
+  });
+
+  // Auto-spin once on load
+  setTimeout(()=>document.getElementById('slotPull').click(),800);
+})();
+</script>
+</body>
+</html>
