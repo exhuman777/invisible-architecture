@@ -35,7 +35,7 @@
 | Service | URL | Type | Free Tier | Paid From | Status | Notes |
 |---------|-----|------|-----------|-----------|--------|-------|
 | Supabase | [supabase.com](https://supabase.com) | Postgres + auth + realtime + storage | 500MB, 2 projects | Pro $25/mo | Active | Firebase alternative built on Postgres. Auth, storage, edge functions included |
-| Neon | [neon.tech](https://neon.tech) | Serverless Postgres | 0.5 GiB, 1 project | Launch $19/mo | Active | Branching (like git for DB). 80% price cut in 2025. Autoscaling to zero |
+| Neon | [neon.com](https://neon.com) | Serverless Postgres | 0.5 GiB, 1 project | Launch $19/mo | Active | Branching (like git for DB). 80% price cut in 2025. Autoscaling to zero |
 | PlanetScale | [planetscale.com](https://planetscale.com) | Serverless MySQL | KILLED FREE TIER (Apr 2024) | Hobby $39/mo | Changed | Was beloved for free tier. Pricing backlash pushed many to Neon/Turso |
 | Turso | [turso.tech](https://turso.tech) | SQLite at edge (libSQL) | 9GB, 500 DBs | Scaler $29/mo | Active | Embedded replicas for zero-latency reads. Great for edge-first apps |
 | Upstash | [upstash.com](https://upstash.com) | Serverless Redis + Kafka + QStash | 10K commands/day | Pay-per-request | Active | True serverless (per-request billing). Redis, Kafka, QStash, Vector |

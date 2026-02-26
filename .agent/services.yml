@@ -73,7 +73,7 @@ databases:
     notes: Open source Firebase alternative. pgvector support.
 
   - name: Neon
-    url: https://neon.tech
+    url: https://neon.com
     type: Serverless Postgres
     free_tier: true
     paid_from: Usage-based (80% price cut in 2025)
