@@ -1,0 +1,353 @@
+# Infrastructure Services Catalog (Structured)
+# Last verified: February 2026
+# For AI agent context — load when user asks about hosting, deployment, infrastructure
+
+hosting:
+  - name: Vercel
+    url: https://vercel.com
+    type: Frontend + Serverless
+    free_tier: true
+    paid_from: $20/mo (Pro)
+    best_for: Next.js, React, static sites
+    status: active
+    notes: Market leader for frontend. Edge functions. Analytics built-in.
+
+  - name: Netlify
+    url: https://netlify.com
+    type: JAMstack hosting
+    free_tier: true
+    paid_from: $19/mo (Pro)
+    best_for: Static sites, JAMstack
+    status: active
+
+  - name: Cloudflare Pages
+    url: https://pages.cloudflare.com
+    type: Static + Workers
+    free_tier: true (unlimited bandwidth)
+    paid_from: $0 (Workers paid plan $5/mo)
+    best_for: Static sites needing global CDN, Workers for compute
+    status: active
+    notes: Zero bandwidth costs. Workers for serverless.
+
+  - name: Railway
+    url: https://railway.com
+    type: Full-stack PaaS
+    free_tier: false
+    paid_from: $5/mo + usage
+    best_for: Full-stack apps, databases, background workers
+    status: active
+    notes: Great DX. Docker-based. Easy Postgres/Redis add-ons.
+
+  - name: Fly.io
+    url: https://fly.io
+    type: Edge containers
+    free_tier: limited
+    paid_from: Pay-as-you-go
+    best_for: Global low-latency apps, multi-region
+    status: active
+
+  - name: Render
+    url: https://render.com
+    type: PaaS (Heroku alternative)
+    free_tier: true (spins down after inactivity)
+    paid_from: $7/mo
+    best_for: Simple deployments, Heroku migration
+    status: active
+
+  - name: DigitalOcean
+    url: https://digitalocean.com
+    type: Cloud / App Platform
+    free_tier: false
+    paid_from: $5/mo (droplet), $5/mo (App Platform)
+    best_for: VPS, managed Kubernetes
+    status: active
+
+databases:
+  - name: Supabase
+    url: https://supabase.com
+    type: Postgres + Auth + Realtime + Storage
+    free_tier: true (generous)
+    paid_from: $25/mo (Pro)
+    best_for: Full-stack apps needing auth + DB + realtime
+    status: active
+    notes: Open source Firebase alternative. pgvector support.
+
+  - name: Neon
+    url: https://neon.tech
+    type: Serverless Postgres
+    free_tier: true
+    paid_from: Usage-based (80% price cut in 2025)
+    best_for: Serverless apps, branching for dev/preview
+    status: active
+    notes: Database branching. Auto-scaling. Very competitive pricing.
+
+  - name: PlanetScale
+    url: https://planetscale.com
+    type: Serverless MySQL
+    free_tier: false (killed free tier 2024)
+    paid_from: $39/mo (Hobby)
+    best_for: MySQL at scale
+    status: changed
+    notes: Free tier removed. Consider Neon or Supabase instead.
+
+  - name: Turso
+    url: https://turso.tech
+    type: SQLite at edge (libSQL)
+    free_tier: true (9GB)
+    paid_from: $29/mo
+    best_for: Edge applications, embedded databases
+    status: active
+
+  - name: Upstash
+    url: https://upstash.com
+    type: Serverless Redis + Kafka + QStash
+    free_tier: true
+    paid_from: Pay per request
+    best_for: Caching, rate limiting, message queues
+    status: active
+
+  - name: MongoDB Atlas
+    url: https://mongodb.com
+    type: Document database
+    free_tier: true (512MB)
+    paid_from: $0.10/hr (flexible)
+    best_for: Document-heavy apps, flexible schema
+    status: active
+
+  - name: CockroachDB
+    url: https://cockroachlabs.com
+    type: Distributed SQL
+    free_tier: true (10GB)
+    paid_from: Usage-based
+    best_for: Multi-region, high availability
+    status: active
+
+auth:
+  - name: Clerk
+    url: https://clerk.com
+    type: Drop-in auth service
+    free_tier: true (10K MAU)
+    paid_from: $25/mo (Pro)
+    best_for: Next.js apps, fast integration
+    status: active
+    notes: Best DX. Pre-built components.
+
+  - name: Auth.js
+    url: https://authjs.dev
+    type: Open source auth library
+    free_tier: true (self-hosted)
+    paid_from: Free
+    best_for: Custom auth, full control
+    status: active
+    notes: Successor to NextAuth.
+
+  - name: Supabase Auth
+    url: https://supabase.com/auth
+    type: Built-in auth (part of Supabase)
+    free_tier: true
+    paid_from: Included in Supabase plan
+    best_for: Already using Supabase
+    status: active
+
+  - name: Lucia Auth
+    url: https://lucia-auth.com
+    type: Auth library
+    free_tier: true
+    paid_from: Free
+    best_for: N/A
+    status: deprecated
+    notes: Deprecated 2024. Recommends building custom with Oslo libraries.
+
+  - name: WorkOS
+    url: https://workos.com
+    type: Enterprise SSO/SCIM
+    free_tier: true (SSO)
+    paid_from: Usage-based
+    best_for: B2B apps needing enterprise auth
+    status: active
+
+payments:
+  - name: Stripe
+    url: https://stripe.com
+    type: Payment processing
+    free_tier: false
+    paid_from: 2.9% + 30c per transaction
+    best_for: Everything. Industry standard.
+    status: active
+    notes: Acquired LemonSqueezy in 2024.
+
+  - name: LemonSqueezy
+    url: https://lemonsqueezy.com
+    type: Merchant of record
+    free_tier: false
+    paid_from: 5% + 50c
+    best_for: Digital products, SaaS
+    status: changed
+    notes: Now part of Stripe. Being integrated.
+
+  - name: Paddle
+    url: https://paddle.com
+    type: Merchant of record
+    free_tier: false
+    paid_from: 5% + 50c
+    best_for: SaaS needing tax handling
+    status: active
+
+  - name: Polar
+    url: https://polar.sh
+    type: Open source monetization
+    free_tier: true
+    paid_from: Transaction fees
+    best_for: OSS projects, digital products
+    status: active
+
+email:
+  - name: Resend
+    url: https://resend.com
+    type: Developer email API
+    free_tier: true (100/day)
+    paid_from: $20/mo
+    best_for: Transactional email, React Email templates
+    status: active
+
+  - name: Postmark
+    url: https://postmarkapp.com
+    type: Transactional email
+    free_tier: true (100/mo)
+    paid_from: $15/mo
+    best_for: High deliverability transactional email
+    status: active
+
+  - name: SendGrid
+    url: https://sendgrid.com
+    type: Email API (Twilio)
+    free_tier: true (100/day)
+    paid_from: $19.95/mo
+    best_for: Marketing + transactional email
+    status: active
+
+  - name: Knock
+    url: https://knock.app
+    type: Notification infrastructure
+    free_tier: true (10K notifications)
+    paid_from: Usage-based
+    best_for: Multi-channel notifications
+    status: active
+
+storage:
+  - name: Cloudflare R2
+    url: https://developers.cloudflare.com/r2
+    type: S3-compatible object storage
+    free_tier: true (10GB)
+    paid_from: $0.015/GB/mo
+    best_for: Object storage without egress fees
+    status: active
+    notes: Zero egress fees. S3-compatible API.
+
+  - name: AWS S3
+    url: https://aws.amazon.com/s3
+    type: Object storage
+    free_tier: true (5GB, 12 months)
+    paid_from: $0.023/GB/mo
+    best_for: Industry standard, AWS ecosystem
+    status: active
+
+  - name: Uploadthing
+    url: https://uploadthing.com
+    type: File upload for Next.js
+    free_tier: true (2GB)
+    paid_from: $10/mo
+    best_for: Quick file upload integration
+    status: active
+
+  - name: Bunny.net
+    url: https://bunny.net
+    type: CDN + storage
+    free_tier: false
+    paid_from: $0.01/GB
+    best_for: Cheap CDN, video delivery
+    status: active
+
+monitoring:
+  - name: Sentry
+    url: https://sentry.io
+    type: Error tracking
+    free_tier: true (5K events/mo)
+    paid_from: $26/mo (Team)
+    best_for: Error tracking, performance monitoring
+    status: active
+
+  - name: PostHog
+    url: https://posthog.com
+    type: Product analytics
+    free_tier: true (1M events/mo)
+    paid_from: Usage-based
+    best_for: Product analytics, feature flags, session replay
+    status: active
+    notes: Self-hostable. All-in-one analytics.
+
+  - name: Plausible
+    url: https://plausible.io
+    type: Privacy-first analytics
+    free_tier: false
+    paid_from: $9/mo
+    best_for: Simple analytics, GDPR compliance
+    status: active
+
+  - name: BetterStack
+    url: https://betterstack.com
+    type: Uptime + logs
+    free_tier: true
+    paid_from: $24/mo
+    best_for: Uptime monitoring, log management
+    status: active
+
+background_jobs:
+  - name: Inngest
+    url: https://inngest.com
+    type: Event-driven functions
+    free_tier: true (50K runs/mo)
+    paid_from: $50/mo
+    best_for: Background jobs, scheduled tasks, event-driven workflows
+    status: active
+
+  - name: Trigger.dev
+    url: https://trigger.dev
+    type: Background jobs for JS/TS
+    free_tier: true
+    paid_from: $30/mo
+    best_for: Long-running tasks, cron jobs
+    status: active
+
+  - name: QStash
+    url: https://upstash.com/qstash
+    type: Serverless message queue
+    free_tier: true (500 msgs/day)
+    paid_from: Included in Upstash plans
+    best_for: Lightweight async messaging
+    status: active
+
+cms:
+  - name: Sanity
+    url: https://sanity.io
+    type: Headless CMS
+    free_tier: true (generous)
+    paid_from: $15/mo (Growth)
+    best_for: Structured content, custom studio
+    status: active
+
+  - name: Contentful
+    url: https://contentful.com
+    type: Headless CMS
+    free_tier: true (25K records)
+    paid_from: $300/mo
+    best_for: Enterprise CMS
+    status: active
+
+  - name: Payload
+    url: https://payloadcms.com
+    type: Open source headless CMS
+    free_tier: true (self-hosted)
+    paid_from: Cloud plans TBD
+    best_for: Full control, Next.js integration
+    status: active

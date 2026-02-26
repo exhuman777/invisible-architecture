@@ -1,0 +1,132 @@
+# Stack Decision Trees (Structured)
+# Last verified: February 2026
+# For AI agent context — load when user needs stack recommendations
+
+decision_trees:
+  - project_type: Landing Page / Portfolio
+    description: Static content, minimal interactivity
+    recommended:
+      framework: Astro
+      hosting: Cloudflare Pages
+      cms: MDX files or Sanity
+      analytics: Plausible or CF Web Analytics
+    alternatives:
+      framework: [Next.js, Hugo, 11ty]
+      hosting: [Vercel, Netlify, GitHub Pages]
+    monthly_cost: "$0"
+    why: Static = free hosting, zero JS by default with Astro
+
+  - project_type: SaaS MVP
+    description: Subscription product, auth, payments, dashboard
+    recommended:
+      framework: Next.js 15 (App Router)
+      hosting: Vercel
+      database: Supabase
+      auth: Clerk
+      payments: Stripe
+      email: Resend
+      analytics: PostHog
+      monitoring: Sentry
+      background_jobs: Inngest
+    alternatives:
+      database: [Neon, PlanetScale]
+      auth: [Supabase Auth, Auth.js]
+      hosting: [Railway, Render]
+    monthly_cost: "$0-25 launch, $50-100 at 1K users, $200-500 at 10K users"
+    why: Fastest path to production. All services have generous free tiers.
+
+  - project_type: AI-Powered App
+    description: Chat, RAG, agents, AI features
+    recommended:
+      framework: Next.js 15
+      ai_sdk: Vercel AI SDK 6.0
+      llm_provider: Anthropic (Claude)
+      vector_db: pgvector (via Supabase)
+      embeddings: OpenAI text-embedding-3-small
+      hosting: Vercel
+      database: Supabase
+      background_jobs: Inngest
+    alternatives:
+      llm_provider: [OpenAI, Google Gemini]
+      vector_db: [Pinecone, Qdrant]
+      ai_sdk: [LangChain, custom]
+    monthly_cost: "$50-500+ (API costs dominate)"
+    why: Streaming support, tool use, RAG ready out of box
+
+  - project_type: API Service
+    description: REST/GraphQL backend, no frontend
+    recommended:
+      framework: Hono
+      hosting: Railway
+      database: Neon Postgres
+      orm: Drizzle
+      cache: Upstash Redis
+      queue: QStash or Inngest
+      auth: JWT (jose library) or API keys
+      docs: Scalar (OpenAPI)
+    alternatives:
+      framework: [Fastify, Express, Elysia]
+      hosting: [Fly.io, Render, Cloudflare Workers]
+      database: [Supabase, Turso]
+    monthly_cost: "$5-20"
+    why: Lightweight, auto-scaling, type-safe
+
+  - project_type: Mobile App
+    description: iOS + Android app
+    recommended:
+      framework: React Native (Expo)
+      backend: Supabase
+      auth: Supabase Auth
+      push_notifications: Expo Push
+    alternatives:
+      framework: [Flutter, Swift/Kotlin native]
+      backend: [Firebase, custom API]
+    monthly_cost: "$0-25 (backend)"
+    why: Cross-platform, managed backend, OTA updates
+
+  - project_type: E-commerce
+    description: Online store, products, checkout
+    recommended:
+      platform: Shopify (hosted)
+    alternative_stack:
+      framework: Next.js
+      commerce: Medusa (headless)
+      payments: Stripe
+      hosting: Vercel
+    monthly_cost: "$29/mo (Shopify Basic) or $0-50 (headless)"
+    why: Shopify for simplicity, headless for full control
+
+  - project_type: Real-time App
+    description: Chat, live updates, collaboration
+    recommended:
+      framework: Next.js 15
+      realtime: Supabase Realtime
+      database: Supabase
+      hosting: Vercel
+    alternatives:
+      realtime: [Ably, Pusher, Socket.io on Railway]
+    monthly_cost: "$25-50"
+    why: Built-in WebSocket support via Supabase
+
+quick_picks:
+  cheapest: Astro + Cloudflare Pages ($0)
+  fastest_to_ship: Next.js + Vercel + Supabase
+  most_scalable: Next.js + Vercel + Neon + Upstash
+  ai_native: Next.js + Vercel AI SDK + Anthropic + Supabase
+  api_focused: Hono + Railway + Neon
+
+defaults_2026:
+  frontend_framework: Next.js 15
+  meta_framework: Astro (content sites)
+  css: Tailwind CSS
+  component_library: shadcn/ui
+  orm: Drizzle
+  validation: Zod
+  hosting: Vercel
+  database: Supabase or Neon
+  auth: Clerk or Supabase Auth
+  payments: Stripe
+  email: Resend
+  analytics: PostHog
+  errors: Sentry
+  ai: Vercel AI SDK + Anthropic

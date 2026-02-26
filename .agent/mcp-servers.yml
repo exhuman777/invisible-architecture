@@ -1,0 +1,196 @@
+# MCP Ecosystem (Structured)
+# Last verified: February 2026
+# For AI agent context — load when user asks about MCP, tool integration
+
+protocol:
+  name: Model Context Protocol
+  abbreviation: MCP
+  created_by: Anthropic
+  created: 2024-11
+  governance: Linux Foundation (AAIF)
+  spec_url: https://modelcontextprotocol.io
+  description: Standard protocol connecting AI assistants to external tools and data sources
+  transports:
+    - stdio (local processes)
+    - SSE (remote, legacy)
+    - Streamable HTTP (remote, new standard)
+  total_servers: 17000+
+
+registries:
+  - name: mcp.so
+    url: https://mcp.so
+    servers: 7500+
+    type: Community registry
+    notes: Largest community catalog
+
+  - name: Glama
+    url: https://glama.ai/mcp
+    servers: 1000+
+    type: Curated directory
+    notes: Reviewed and categorized
+
+  - name: Smithery
+    url: https://smithery.ai
+    servers: 500+
+    type: Registry with hosted servers
+    notes: Can run servers remotely
+
+  - name: Official
+    url: https://modelcontextprotocol.io
+    type: Spec + reference implementations
+    notes: Canonical reference
+
+  - name: OpenTools (Composio)
+    url: https://composio.dev
+    servers: 10000+
+    type: Tool aggregator
+    notes: MCP + native tool support
+
+popular_servers:
+  - name: filesystem
+    package: "@modelcontextprotocol/server-filesystem"
+    description: Read/write local files and directories
+    use_when: Always (local development)
+    transport: stdio
+
+  - name: github
+    package: "@modelcontextprotocol/server-github"
+    description: GitHub API — issues, PRs, repos, search
+    use_when: Working with GitHub repos
+    transport: stdio
+    requires: GITHUB_TOKEN
+
+  - name: postgres
+    package: "@modelcontextprotocol/server-postgres"
+    description: Query PostgreSQL databases
+    use_when: Working with Postgres
+    transport: stdio
+    requires: DATABASE_URL
+
+  - name: sqlite
+    package: "@modelcontextprotocol/server-sqlite"
+    description: SQLite database operations
+    use_when: Working with SQLite/D1/Turso
+    transport: stdio
+
+  - name: brave-search
+    package: "@modelcontextprotocol/server-brave-search"
+    description: Web search via Brave Search API
+    use_when: Need to search the web
+    transport: stdio
+    requires: BRAVE_API_KEY
+
+  - name: puppeteer
+    package: "@modelcontextprotocol/server-puppeteer"
+    description: Browser automation, screenshots, scraping
+    use_when: Need to interact with web pages
+    transport: stdio
+
+  - name: memory
+    package: "@modelcontextprotocol/server-memory"
+    description: Persistent knowledge graph across sessions
+    use_when: Need long-term memory
+    transport: stdio
+
+  - name: fetch
+    package: "@modelcontextprotocol/server-fetch"
+    description: Make HTTP requests, fetch web content
+    use_when: Need to call APIs or fetch URLs
+    transport: stdio
+
+  - name: sequential-thinking
+    package: "@modelcontextprotocol/server-sequential-thinking"
+    description: Chain of thought reasoning tool
+    use_when: Complex reasoning tasks
+    transport: stdio
+
+  - name: slack
+    package: "@modelcontextprotocol/server-slack"
+    description: Slack workspace integration
+    use_when: Working with Slack
+    transport: stdio
+    requires: SLACK_TOKEN
+
+  - name: context7
+    package: upstash/context7-mcp
+    description: Library documentation lookup
+    use_when: Need up-to-date library docs
+    transport: stdio
+
+  - name: supabase
+    package: supabase/mcp
+    description: Supabase project management and queries
+    use_when: Working with Supabase
+    transport: stdio
+    requires: SUPABASE_ACCESS_TOKEN
+
+clients:
+  - name: Claude Desktop
+    vendor: Anthropic
+    mcp_support: Full
+    config: claude_desktop_config.json
+
+  - name: Claude Code
+    vendor: Anthropic
+    mcp_support: Full
+    config: .mcp.json (project) or ~/.claude/mcp.json (global)
+
+  - name: Cursor
+    vendor: Anysphere
+    mcp_support: Full
+    config: .cursor/mcp.json
+
+  - name: Windsurf
+    vendor: Codeium
+    mcp_support: Full
+    config: Settings UI
+
+  - name: VS Code (Copilot)
+    vendor: Microsoft
+    mcp_support: Agent mode
+    config: .vscode/mcp.json
+
+  - name: Continue
+    vendor: Continue.dev
+    mcp_support: Full
+    config: config.json
+
+  - name: Zed
+    vendor: Zed Industries
+    mcp_support: Full
+    config: settings.json
+
+sdks:
+  - language: TypeScript
+    package: "@modelcontextprotocol/sdk"
+    install: "npm install @modelcontextprotocol/sdk"
+
+  - language: Python
+    package: mcp
+    install: "pip install mcp"
+
+  - language: Kotlin
+    package: community
+    notes: JetBrains maintained
+
+  - language: "C#"
+    package: community
+    notes: .NET ecosystem
+
+example_config:
+  claude_code:
+    file: .mcp.json
+    content: |
+      {
+        "mcpServers": {
+          "filesystem": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-filesystem", "./"]
+          },
+          "github": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-github"],
+            "env": { "GITHUB_TOKEN": "ghp_..." }
+          }
+        }
+      }
