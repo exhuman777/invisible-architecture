@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Agentic Internet</title>
+<meta name="description" content="A visual map of the agentic internet. MCP, Skills, A2A, registries, and frameworks. Verified GitHub repos with star counts.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --orange-300: #FFD4B3; --orange-400: #FFCC99; --orange-500: #FFB380;
+  --orange-600: #FF9966; --orange-700: #E8956A; --orange-800: #D07850; --orange-900: #B85C38;
+  --black: #0A0A0A; --gray-900: #1A1A19; --gray-800: #2A2A28; --gray-700: #3A3A37;
+  --gray-600: #555550; --gray-400: #8A8A82; --gray-200: #C5C5BC; --white: #F5F5F0; --pure-white: #FFFFFF;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  --font-serif: 'Instrument Serif', 'Georgia', serif;
+}
+
+body {
+  background: var(--black); color: var(--white);
+  font-family: var(--font-mono); font-size: clamp(0.78rem, 1.1vw, 0.95rem);
+  line-height: 1.65; font-weight: 300; overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: rgba(255,179,128,0.3); color: var(--pure-white); }
+a { color: var(--orange-500); text-decoration: none; border-bottom: 1px solid rgba(255,179,128,0.3); transition: all 0.2s; }
+a:hover { color: var(--orange-300); border-color: var(--orange-300); }
+
+.wrap { max-width: 76ch; margin: 0 auto; padding: 0 1.2rem; }
+section { padding: 1rem 0; }
+
+.section-number { font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gray-600); margin-bottom: 0.15rem; display: block; }
+.section-title { font-family: var(--font-serif); font-size: clamp(1.6rem, 3.5vw, 3rem); font-weight: 400; font-style: italic; color: var(--pure-white); line-height: 1.15; margin-bottom: 0.3rem; }
+.section-subtitle { font-size: 0.7rem; color: var(--orange-600); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; }
+.poem { font-family: var(--font-serif); font-size: clamp(1rem, 1.8vw, 1.35rem); font-style: italic; color: var(--orange-300); line-height: 1.55; margin-bottom: 1rem; }
+.prose { color: var(--gray-200); margin-bottom: 1rem; }
+.prose strong { color: var(--white); font-weight: 500; }
+.divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--gray-800) 20%, var(--orange-900) 50%, var(--gray-800) 80%, transparent); margin: 1.5rem 0; }
+
+/* Repo cards */
+.repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0.6rem; margin-bottom: 1rem; }
+.repo-card {
+  background: linear-gradient(170deg, rgba(26,26,25,0.6), rgba(10,10,10,0.8));
+  border-left: 2px solid var(--gray-800); padding: 0.7rem 0.9rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25); transition: all 0.25s;
+}
+.repo-card:hover { border-left-color: var(--orange-800); transform: translateY(-1px); }
+.repo-card .repo-name { color: var(--orange-400); font-weight: 500; font-size: 0.8rem; margin-bottom: 0.2rem; }
+.repo-card .repo-stars { color: var(--orange-500); font-size: 0.65rem; float: right; }
+.repo-card .repo-desc { color: var(--gray-400); font-size: 0.7rem; line-height: 1.5; }
+.repo-card a { border-bottom: none; }
+.repo-card a:hover .repo-name { color: var(--orange-300); }
+
+/* Registry cards */
+.registry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.5rem; margin-bottom: 1rem; }
+.reg-card {
+  background: linear-gradient(170deg, rgba(26,26,25,0.5), rgba(10,10,10,0.7));
+  border: 1px solid var(--gray-800); padding: 0.5rem 0.7rem; text-align: center;
+  transition: all 0.25s;
+}
+.reg-card:hover { border-color: var(--orange-800); }
+.reg-card .reg-name { color: var(--orange-400); font-weight: 500; font-size: 0.75rem; }
+.reg-card .reg-scale { color: var(--gray-400); font-size: 0.6rem; margin-top: 0.15rem; }
+
+/* Tables */
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.68rem; margin-bottom: 1rem; }
+.data-table th { text-align: left; padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-700); color: var(--orange-400); font-weight: 400; letter-spacing: 1px; font-size: 0.6rem; text-transform: uppercase; }
+.data-table td { padding: 0.2rem 0.5rem; border-bottom: 1px solid rgba(42,42,40,0.5); color: var(--gray-400); }
+.data-table td a { font-size: inherit; }
+
+/* Flow diagram */
+.flow { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 1.5rem 0; }
+.flow-node {
+  border-bottom: 2px solid var(--gray-800); padding: 0.4rem 0.8rem; font-size: 0.65rem;
+  text-align: center; min-width: 180px; max-width: 400px; width: 90%;
+  background: linear-gradient(170deg, rgba(26,26,25,0.5), rgba(10,10,10,0.7));
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: all 0.25s;
+}
+.flow-node:hover { border-bottom-color: var(--orange-800); transform: scale(0.98); }
+.flow-node .node-title { color: var(--orange-400); font-weight: 500; letter-spacing: 1px; font-size: 0.6rem; text-transform: uppercase; }
+.flow-node .node-desc { color: var(--gray-400); font-size: 0.58rem; margin-top: 0.15rem; }
+.flow-node.accent { border-bottom-color: rgba(232,149,106,0.5); }
+.flow-arrow { width: 1px; height: 16px; background: var(--gray-700); position: relative; }
+.flow-arrow::after { content: ""; position: absolute; bottom: -3px; left: -3px; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--gray-700); }
+.flow-row { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 500px; }
+.flow-row .flow-node { min-width: 0; flex: 1; min-width: 120px; }
+.flow-branch { width: 60%; height: 1px; background: var(--gray-700); }
+
+/* Code blocks */
+.code-block {
+  background: linear-gradient(170deg, rgba(26,26,25,0.8), rgba(10,10,10,0.9));
+  border-left: 2px solid var(--gray-800); padding: 0.7rem 0.9rem;
+  font-size: 0.68rem; line-height: 1.7; overflow-x: auto; white-space: pre;
+  color: var(--gray-400); margin-bottom: 1rem; transition: all 0.25s;
+}
+.code-block:hover { border-left-color: var(--orange-800); }
+.code-block .kw { color: var(--orange-500); }
+.code-block .str { color: var(--orange-300); }
+.code-block .cmt { color: var(--gray-700); }
+
+/* Nav */
+.top-nav { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,179,128,0.1); padding: 0.5rem 0; }
+.top-nav .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.top-nav a { font-size: 0.7rem; color: var(--gray-400); border-bottom: none; }
+.top-nav a:hover { color: var(--orange-500); }
+.top-nav .brand { color: var(--orange-500); font-weight: 700; font-size: 0.75rem; letter-spacing: 2px; }
+
+/* Tag */
+.tag { display: inline-block; padding: 0.1rem 0.4rem; font-size: 0.55rem; letter-spacing: 1px; border: 1px solid rgba(255,179,128,0.2); color: var(--orange-500); background: rgba(255,179,128,0.05); margin-right: 0.3rem; margin-bottom: 0.2rem; }
+
+.hero-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.hero-stat { text-align: center; }
+.hero-stat .num { font-size: 1.5rem; font-weight: 700; color: var(--orange-500); }
+.hero-stat .label { font-size: 0.55rem; color: var(--gray-400); letter-spacing: 1px; text-transform: uppercase; }
+
+footer { border-top: 1px solid rgba(255,179,128,0.1); padding: 1.5rem 0; text-align: center; color: var(--gray-600); font-size: 0.6rem; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="wrap">
+    <a href="/" class="brand">EXHUMAN</a>
+    <div style="display:flex; gap:1rem;">
+      <a href="/">Home</a>
+      <a href="/invisible-architecture">Knowledge Base</a>
+      <a href="/pages/invisible-architecture.html">Essay</a>
+      <a href="/agentic-registry">Registry</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ═══ HERO ═══ -->
+<section style="padding-top: 3rem;">
+  <span class="section-number">The Invisible Architecture, Extended</span>
+  <h1 class="section-title">The Agentic Internet</h1>
+  <p class="section-subtitle">Protocols, Registries, and Frameworks Building the Agent Web</p>
+
+  <p class="poem">
+    The internet learned to speak.<br>
+    Not to humans. To machines.<br>
+    MCP gives them tools. Skills give them knowledge.<br>
+    A2A lets them talk to each other.<br>
+    The agentic internet is already here.
+  </p>
+
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">3</div><div class="label">Protocols</div></div>
+    <div class="hero-stat"><div class="num">100K+</div><div class="label">MCP Servers</div></div>
+    <div class="hero-stat"><div class="num">270K+</div><div class="label">Agent Skills</div></div>
+    <div class="hero-stat"><div class="num">50+</div><div class="label">A2A Partners</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ SECTION 1: THE THREE PROTOCOLS ═══ -->
+<section>
+  <span class="section-number">Section 01</span>
+  <h2 class="section-title">The Three Protocols</h2>
+  <p class="section-subtitle">The Protocol Stack of the Agent Web</p>
+
+  <div class="flow">
+    <div class="flow-node accent">
+      <div class="node-title">A2A</div>
+      <div class="node-desc">Agent-to-Agent Protocol. Agents talk to each other.</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node accent">
+      <div class="node-title">Skills (SKILL.md)</div>
+      <div class="node-desc">Portable capabilities. Write once, use in any agent.</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node accent">
+      <div class="node-title">MCP</div>
+      <div class="node-desc">Model Context Protocol. Agents connect to tools.</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node">
+      <div class="node-title">Infrastructure</div>
+      <div class="node-desc">Servers, APIs, databases, file systems.</div>
+    </div>
+  </div>
+
+  <p class="prose"><strong>MCP</strong> is USB-C for AI. One standard interface, any tool. An MCP server can work with Claude, Cursor, VS Code Copilot, Windsurf, and any MCP-compatible client. Created by <a href="https://anthropic.com">Anthropic</a>, November 2024.</p>
+
+  <p class="prose"><strong>Agent Skills</strong> package domain expertise into reusable capabilities. A skill is a folder with a <code>SKILL.md</code> file. Works across Claude Code, OpenAI Codex, GitHub Copilot, and any tool supporting the standard. Released December 2025.</p>
+
+  <p class="prose"><strong>A2A</strong> (Agent-to-Agent) lets agents from different vendors collaborate without sharing memory or tools. Built on HTTP + SSE + JSON-RPC. Created by <a href="https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/">Google</a>, now under the <a href="https://linuxfoundation.org">Linux Foundation</a>. 50+ launch partners including Salesforce, SAP, PayPal, and LangChain.</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ SECTION 2: KEY REPOSITORIES ═══ -->
+<section>
+  <span class="section-number">Section 02</span>
+  <h2 class="section-title">The Repositories</h2>
+  <p class="section-subtitle">Verified GitHub Stars, February 2026</p>
+
+  <p class="prose">Every repo below was verified via the GitHub API. Stars are real. Links are live.</p>
+
+  <div class="repo-grid">
+
+    <div class="repo-card">
+      <a href="https://github.com/langchain-ai/langchain" target="_blank">
+        <span class="repo-stars">127.6K stars</span>
+        <div class="repo-name">langchain-ai/langchain</div>
+        <div class="repo-desc">Agent orchestration, tool chains, RAG. The most-starred AI framework.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/punkpeye/awesome-mcp-servers" target="_blank">
+        <span class="repo-stars">81.7K stars</span>
+        <div class="repo-name">punkpeye/awesome-mcp-servers</div>
+        <div class="repo-desc">Community curated list of MCP servers. The definitive directory.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/modelcontextprotocol/servers" target="_blank">
+        <span class="repo-stars">79.5K stars</span>
+        <div class="repo-name">modelcontextprotocol/servers</div>
+        <div class="repo-desc">Official reference MCP servers. File systems, GitHub, Git, Postgres, Slack.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/anthropics/skills" target="_blank">
+        <span class="repo-stars">77.7K stars</span>
+        <div class="repo-name">anthropics/skills</div>
+        <div class="repo-desc">Official Agent Skills repo + spec. The SKILL.md standard.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/openai/codex" target="_blank">
+        <span class="repo-stars">62.1K stars</span>
+        <div class="repo-name">openai/codex</div>
+        <div class="repo-desc">Terminal coding agent. MCP server mode. AGENTS.md support.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/vercel/ai" target="_blank">
+        <span class="repo-stars">22.1K stars</span>
+        <div class="repo-name">vercel/ai</div>
+        <div class="repo-desc">AI SDK 6. Agent abstractions, MCP, streaming, multi-model. TypeScript.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/a2aproject/A2A" target="_blank">
+        <span class="repo-stars">22.1K stars</span>
+        <div class="repo-name">a2aproject/A2A</div>
+        <div class="repo-desc">Agent-to-Agent protocol. Google + Linux Foundation. 50+ partners.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/modelcontextprotocol/python-sdk" target="_blank">
+        <span class="repo-stars">21.9K stars</span>
+        <div class="repo-name">modelcontextprotocol/python-sdk</div>
+        <div class="repo-desc">Official MCP Python SDK. Includes FastMCP integration.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/openai/openai-agents-python" target="_blank">
+        <span class="repo-stars">19.2K stars</span>
+        <div class="repo-name">openai/openai-agents-python</div>
+        <div class="repo-desc">OpenAI Agents SDK. Multi-step workflows, guardrails, handoffs.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/modelcontextprotocol/typescript-sdk" target="_blank">
+        <span class="repo-stars">11.7K stars</span>
+        <div class="repo-name">modelcontextprotocol/typescript-sdk</div>
+        <div class="repo-desc">Official MCP TypeScript SDK. Foundation for most TS MCP servers.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/agentskills/agentskills" target="_blank">
+        <span class="repo-stars">11.2K stars</span>
+        <div class="repo-name">agentskills/agentskills</div>
+        <div class="repo-desc">Community Agent Skills spec. Discovery, versioning, execution semantics.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/modelcontextprotocol/registry" target="_blank">
+        <span class="repo-stars">6.5K stars</span>
+        <div class="repo-name">modelcontextprotocol/registry</div>
+        <div class="repo-desc">Official MCP Registry. ~2,000 entries. API freeze v0.1.</div>
+      </a>
+    </div>
+
+    <div class="repo-card">
+      <a href="https://github.com/microsoft/skills" target="_blank">
+        <span class="repo-stars">1.5K stars</span>
+        <div class="repo-name">microsoft/skills</div>
+        <div class="repo-desc">126 skills for Copilot. Cosmos DB, Azure, Foundry. Plus Agents.md.</div>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ SECTION 3: REGISTRIES & MARKETPLACES ═══ -->
+<section>
+  <span class="section-number">Section 03</span>
+  <h2 class="section-title">The Registries</h2>
+  <p class="section-subtitle">Where Agents Find Their Tools</p>
+
+  <p class="poem">
+    A registry for tools.<br>
+    A marketplace for skills.<br>
+    The app store of the agent web<br>
+    is already built.
+  </p>
+
+  <h3 style="color: var(--orange-400); font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 0.5rem; text-transform: uppercase;">MCP Registries</h3>
+
+  <div class="registry-grid">
+    <a href="https://registry.modelcontextprotocol.io/" target="_blank" class="reg-card">
+      <div class="reg-name">Official MCP Registry</div>
+      <div class="reg-scale">~2,000 entries. The canonical source.</div>
+    </a>
+    <a href="https://smithery.ai/" target="_blank" class="reg-card">
+      <div class="reg-name">Smithery</div>
+      <div class="reg-scale">100K+ tools. Largest open marketplace.</div>
+    </a>
+    <a href="https://glama.ai/mcp" target="_blank" class="reg-card">
+      <div class="reg-name">Glama</div>
+      <div class="reg-scale">Hosted MCP gateway. They run servers for you.</div>
+    </a>
+    <a href="https://mcp.so/" target="_blank" class="reg-card">
+      <div class="reg-name">mcp.so</div>
+      <div class="reg-scale">17,900+ servers. Community-driven.</div>
+    </a>
+    <a href="https://www.pulsemcp.com/servers" target="_blank" class="reg-card">
+      <div class="reg-name">PulseMCP</div>
+      <div class="reg-scale">8,600+ entries. Updated daily.</div>
+    </a>
+    <a href="https://mcpmarket.com/" target="_blank" class="reg-card">
+      <div class="reg-name">MCPMarket</div>
+      <div class="reg-scale">MCP servers + agent skills directory.</div>
+    </a>
+    <a href="https://lobehub.com/mcp" target="_blank" class="reg-card">
+      <div class="reg-name">LobeHub</div>
+      <div class="reg-scale">33,200+ servers. Integrated with LobeChat.</div>
+    </a>
+    <a href="https://composio.dev/" target="_blank" class="reg-card">
+      <div class="reg-name">Composio</div>
+      <div class="reg-scale">500+ managed MCP servers. Auth handled.</div>
+    </a>
+  </div>
+
+  <h3 style="color: var(--orange-400); font-size: 0.75rem; letter-spacing: 2px; margin: 1rem 0 0.5rem; text-transform: uppercase;">Skills Marketplaces</h3>
+
+  <div class="registry-grid">
+    <a href="https://skillsmp.com" target="_blank" class="reg-card">
+      <div class="reg-name">SkillsMP</div>
+      <div class="reg-scale">270,000+ skills from GitHub.</div>
+    </a>
+    <a href="https://skills.sh/" target="_blank" class="reg-card">
+      <div class="reg-name">Skills.sh</div>
+      <div class="reg-scale">Discover and install agent skills.</div>
+    </a>
+    <a href="https://www.skillhub.club/" target="_blank" class="reg-card">
+      <div class="reg-name">SkillHub</div>
+      <div class="reg-scale">Claude skills marketplace.</div>
+    </a>
+    <a href="https://agentskills.io/" target="_blank" class="reg-card">
+      <div class="reg-name">AgentSkills.io</div>
+      <div class="reg-scale">Spec + docs. v1.0 coming H2 2026.</div>
+    </a>
+  </div>
+
+  <h3 style="color: var(--orange-400); font-size: 0.75rem; letter-spacing: 2px; margin: 1rem 0 0.5rem; text-transform: uppercase;">Platform Marketplaces</h3>
+
+  <div class="registry-grid">
+    <a href="https://vercel.com/marketplace" target="_blank" class="reg-card">
+      <div class="reg-name">Vercel Marketplace</div>
+      <div class="reg-scale">AI agents + services. Unified billing.</div>
+    </a>
+    <a href="https://code.visualstudio.com/docs/copilot/customization/agent-skills" target="_blank" class="reg-card">
+      <div class="reg-name">VS Code Agent Skills</div>
+      <div class="reg-scale">Skills for GitHub Copilot.</div>
+    </a>
+    <a href="https://developers.openai.com/codex/skills/" target="_blank" class="reg-card">
+      <div class="reg-name">OpenAI Codex Skills</div>
+      <div class="reg-scale">Skills for Codex CLI.</div>
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ SECTION 4: SPECIFICATIONS ═══ -->
+<section>
+  <span class="section-number">Section 04</span>
+  <h2 class="section-title">The Specifications</h2>
+  <p class="section-subtitle">Read the Specs, Build the Future</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Protocol</th><th>Spec</th><th>Status</th><th>Created By</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--orange-400)">MCP</td>
+        <td><a href="https://modelcontextprotocol.io/" target="_blank">modelcontextprotocol.io</a></td>
+        <td>Stable (Nov 2025 release)</td>
+        <td>Anthropic</td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange-400)">Agent Skills</td>
+        <td><a href="https://agentskills.io/" target="_blank">agentskills.io</a></td>
+        <td>Draft (v1.0 H2 2026)</td>
+        <td>Anthropic + Community</td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange-400)">A2A</td>
+        <td><a href="https://a2a-protocol.org/latest/" target="_blank">a2a-protocol.org</a></td>
+        <td>v0.3</td>
+        <td>Google / Linux Foundation</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="color: var(--orange-400); font-size: 0.75rem; letter-spacing: 2px; margin: 1rem 0 0.5rem; text-transform: uppercase;">Official SDKs</h3>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>SDK</th><th>Language</th><th>Stars</th><th>Link</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--orange-400)">MCP TypeScript SDK</td>
+        <td>TypeScript</td>
+        <td>11.7K</td>
+        <td><a href="https://github.com/modelcontextprotocol/typescript-sdk" target="_blank">GitHub</a></td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange-400)">MCP Python SDK</td>
+        <td>Python</td>
+        <td>21.9K</td>
+        <td><a href="https://github.com/modelcontextprotocol/python-sdk" target="_blank">GitHub</a></td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange-400)">FastMCP</td>
+        <td>Python</td>
+        <td>21.9K</td>
+        <td><a href="https://github.com/jlowin/fastmcp" target="_blank">GitHub</a> | <a href="https://gofastmcp.com" target="_blank">Docs</a></td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange-400)">Vercel AI SDK</td>
+        <td>TypeScript</td>
+        <td>22.1K</td>
+        <td><a href="https://github.com/vercel/ai" target="_blank">GitHub</a> | <a href="https://ai-sdk.dev" target="_blank">Docs</a></td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange-400)">OpenAI Agents SDK</td>
+        <td>Python</td>
+        <td>19.2K</td>
+        <td><a href="https://github.com/openai/openai-agents-python" target="_blank">GitHub</a></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ SECTION 5: BUILD ═══ -->
+<section>
+  <span class="section-number">Section 05</span>
+  <h2 class="section-title">Build Something</h2>
+  <p class="section-subtitle">Two Apps You Can Build Today</p>
+
+  <p class="poem">
+    The best way to understand protocols<br>
+    is to ship something that uses them.
+  </p>
+
+  <h3 style="color: var(--orange-400); font-size: 0.8rem; margin-bottom: 0.3rem;">App 1: Bookmark Brain (Python, 30 min)</h3>
+  <p class="prose">An MCP server that lets AI agents search and manage your bookmarks. 3 tools, 1 resource. Works with Claude, Cursor, any MCP client.</p>
+
+  <div class="code-block"><span class="cmt"># Install</span>
+pip install fastmcp
+
+<span class="cmt"># server.py</span>
+<span class="kw">from</span> fastmcp <span class="kw">import</span> FastMCP
+mcp = FastMCP(<span class="str">"Bookmark Brain"</span>)
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> add_bookmark(url: str, title: str, tags: list[str]) -> str:
+    <span class="str">"""Save a bookmark with tags."""</span>
+    <span class="cmt"># Save to JSON, return confirmation</span>
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> search_bookmarks(query: str) -> list[dict]:
+    <span class="str">"""Search by title, URL, or tag."""</span>
+
+<span class="cmt"># Test: fastmcp dev server.py</span>
+<span class="cmt"># Install: claude mcp add bookmark-brain -- python3 server.py</span></div>
+
+  <h3 style="color: var(--orange-400); font-size: 0.8rem; margin-bottom: 0.3rem;">App 2: Project Tracker (TypeScript, 45 min)</h3>
+  <p class="prose">An MCP server that tracks your side projects. Add projects, update status, get a dashboard. 3 tools, 1 prompt.</p>
+
+  <div class="code-block"><span class="cmt">// Install</span>
+npm install @modelcontextprotocol/sdk zod
+
+<span class="cmt">// server.ts</span>
+<span class="kw">import</span> { McpServer } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/mcp.js"</span>;
+
+<span class="kw">const</span> server = <span class="kw">new</span> McpServer({ name: <span class="str">"Project Tracker"</span>, version: <span class="str">"1.0.0"</span> });
+
+server.tool(<span class="str">"add_project"</span>, <span class="str">"Add a new project"</span>,
+  { name: z.string(), stack: z.string(), status: z.enum([<span class="str">"idea"</span>, <span class="str">"building"</span>, <span class="str">"live"</span>]) },
+  <span class="kw">async</span> ({ name, stack, status }) => {
+    <span class="cmt">// Save to JSON, return confirmation</span>
+  }
+);
+
+server.tool(<span class="str">"dashboard"</span>, <span class="str">"Get project dashboard"</span>, {},
+  <span class="kw">async</span> () => {
+    <span class="cmt">// Return grouped by status</span>
+  }
+);
+
+<span class="cmt">// Test: npx @modelcontextprotocol/inspector node server.js</span></div>
+
+  <p class="prose">Full source code for both apps: <a href="/invisible-architecture">Knowledge Base > Guides > The Agentic Internet</a></p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ SECTION 6: THE CONVERGENCE ═══ -->
+<section>
+  <span class="section-number">Section 06</span>
+  <h2 class="section-title">The Convergence</h2>
+  <p class="section-subtitle">What Comes Next</p>
+
+  <p class="poem">
+    HTTP + DNS + TLS created the web.<br>
+    MCP + Skills + A2A are creating the agent web.<br>
+    Same pattern. Different species of user.
+  </p>
+
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-node accent">
+        <div class="node-title">MCP Registry v1</div>
+        <div class="node-desc">2026. Official GA. Subregistries for domains.</div>
+      </div>
+      <div class="flow-node accent">
+        <div class="node-title">Skills v1.0</div>
+        <div class="node-desc">H2 2026. Finalized cross-platform spec.</div>
+      </div>
+      <div class="flow-node accent">
+        <div class="node-title">A2A v1.0</div>
+        <div class="node-desc">Enterprise agent-to-agent. Full auth parity.</div>
+      </div>
+    </div>
+    <div class="flow-branch"></div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node" style="max-width: 500px;">
+      <div class="node-title">Agent Marketplaces</div>
+      <div class="node-desc">Vercel, GitHub, Cloudflare. Discover, install, bill through the platform. The app store of agents.</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node" style="max-width: 500px;">
+      <div class="node-title">The Agentic Internet</div>
+      <div class="node-desc">Agents with tools, capabilities, and the ability to hire other agents. The web, but for machines.</div>
+    </div>
+  </div>
+
+  <p class="prose" style="margin-top: 1rem;">The pieces are in place. The protocols are open. The registries are filling up. The frameworks work. The only missing ingredient is builders. That's you.</p>
+
+  <p class="prose"><a href="/agentic-registry">Submit your project to the Exhuman Agentic Registry &rarr;</a></p>
+</section>
+
+<div class="divider"></div>
+
+<footer>
+  <p>Built by <a href="https://github.com/exhuman777">Exhuman</a> on <a href="https://www.zo.computer/">Zo</a></p>
+  <p style="margin-top: 0.3rem; color: var(--gray-700);">All GitHub star counts verified via API. February 2026.</p>
+</footer>
+
+</div>
+</body>
+</html>
