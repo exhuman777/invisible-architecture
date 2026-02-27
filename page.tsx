@@ -225,6 +225,143 @@ const ARTICLES: Article[] = [
   },
 ];
 
+// ─── CometCursor ─────────────────────────────────────────────────────────────
+// Comet trail + spinning star at cursor. Big American star appears when cursor stops.
+// Works on desktop (mousemove) and mobile (touchstart/touchmove/touchend).
+
+function CometCursor() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let animId: number;
+    const trail: { x: number; y: number; t: number }[] = [];
+    const TL = 35;
+    let mx = 0, my = 0, lastMoveT = 0, speed = 0;
+    let starScale = 0, catchTime = 0, wasCaught = false;
+
+    function resize() { canvas!.width = innerWidth; canvas!.height = innerHeight; }
+    resize();
+
+    function onPointerInput(x: number, y: number) {
+      const now = Date.now(), dt = now - lastMoveT || 16;
+      const dx = x - mx, dy = y - my;
+      speed = Math.sqrt(dx * dx + dy * dy) / (dt / 16);
+      mx = x; my = y; lastMoveT = now;
+      trail.push({ x, y, t: now });
+      if (trail.length > TL) trail.shift();
+    }
+
+    function onMouse(e: MouseEvent) { onPointerInput(e.clientX, e.clientY); }
+    function onTouchStart(e: TouchEvent) { const t = e.touches[0]; if (t) { mx = t.clientX; my = t.clientY; lastMoveT = Date.now(); } }
+    function onTouchMove(e: TouchEvent) { const t = e.touches[0]; if (t) onPointerInput(t.clientX, t.clientY); }
+    function onTouchEnd() { lastMoveT = Date.now(); speed = 0; }
+
+    function drawStar(cx: number, cy: number, spikes: number, outerR: number, innerR: number, rot: number) {
+      ctx!.beginPath();
+      for (let i = 0; i < spikes * 2; i++) {
+        const r = i % 2 === 0 ? outerR : innerR;
+        const a = rot + (i * Math.PI / spikes) - Math.PI / 2;
+        if (i === 0) ctx!.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+        else ctx!.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+      }
+      ctx!.closePath();
+    }
+
+    function draw() {
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+      const n = Date.now();
+      const timeSinceMove = n - lastMoveT;
+      const caught = timeSinceMove > 120 || speed < 1.5;
+      if (caught && !wasCaught) { catchTime = n; wasCaught = true; }
+      if (!caught) wasCaught = false;
+
+      let target = 0;
+      if (caught) { target = (n - catchTime < 1000) ? 1 : 0.45; }
+      const lerpSpeed = target > starScale ? 0.1 : 0.04;
+      starScale += (target - starScale) * lerpSpeed;
+
+      // Comet tail
+      const alive = trail.filter(p => n - p.t < 700);
+      if (alive.length > 1) {
+        for (let i = 1; i < alive.length; i++) {
+          const p = alive[i], prev = alive[i - 1];
+          const progress = i / alive.length;
+          const age = n - p.t;
+          const fade = (1 - age / 700) * progress;
+          const thickness = 0.4 + progress * 4;
+          const r = 255, g = Math.round(130 + progress * 100), b = Math.round(40 + progress * 100);
+          ctx!.beginPath(); ctx!.moveTo(prev.x, prev.y); ctx!.lineTo(p.x, p.y);
+          ctx!.strokeStyle = `rgba(${r},${g},${b},${fade * 0.7})`;
+          ctx!.lineWidth = thickness; ctx!.lineCap = "round"; ctx!.stroke();
+          ctx!.beginPath(); ctx!.moveTo(prev.x, prev.y); ctx!.lineTo(p.x, p.y);
+          ctx!.strokeStyle = `rgba(${r},${g},${b},${fade * 0.12})`;
+          ctx!.lineWidth = thickness * 5; ctx!.stroke();
+        }
+      }
+
+      // Head glow
+      const grd = ctx!.createRadialGradient(mx, my, 0, mx, my, 14);
+      grd.addColorStop(0, "rgba(255,255,255,0.3)");
+      grd.addColorStop(0.4, "rgba(255,200,140,0.1)");
+      grd.addColorStop(1, "rgba(255,153,102,0)");
+      ctx!.fillStyle = grd; ctx!.beginPath(); ctx!.arc(mx, my, 14, 0, Math.PI * 2); ctx!.fill();
+
+      // Small spinning star at tip
+      const rot = n * 0.0012;
+      ctx!.save(); ctx!.shadowColor = "rgba(255,255,255,0.6)"; ctx!.shadowBlur = 6;
+      drawStar(mx, my, 5, 5, 2, rot);
+      ctx!.fillStyle = "rgba(255,255,255,0.85)"; ctx!.fill(); ctx!.restore();
+
+      // Big American star on catch-up
+      if (starScale > 0.02) {
+        const s = starScale;
+        const bigR = 4 + s * 15, bigIR = bigR * 0.42;
+        const bigRot = n * 0.0005;
+        const pulse = 1 + Math.sin(n * 0.004) * 0.06;
+        ctx!.save(); ctx!.globalAlpha = s;
+        const burstR = bigR * 2.2 * pulse;
+        const bgrd = ctx!.createRadialGradient(mx, my, bigR * 0.3, mx, my, burstR);
+        bgrd.addColorStop(0, "rgba(255,220,160,0.25)");
+        bgrd.addColorStop(0.5, "rgba(255,180,100,0.06)");
+        bgrd.addColorStop(1, "rgba(255,153,102,0)");
+        ctx!.fillStyle = bgrd; ctx!.beginPath(); ctx!.arc(mx, my, burstR, 0, Math.PI * 2); ctx!.fill();
+        ctx!.shadowColor = "rgba(255,200,120,0.9)"; ctx!.shadowBlur = 20 * s;
+        drawStar(mx, my, 5, bigR * pulse, bigIR * pulse, bigRot);
+        const sgrd = ctx!.createRadialGradient(mx, my, 0, mx, my, bigR);
+        sgrd.addColorStop(0, "rgba(255,255,255,1)");
+        sgrd.addColorStop(0.6, "rgba(255,240,220,0.95)");
+        sgrd.addColorStop(1, "rgba(255,200,140,0.8)");
+        ctx!.fillStyle = sgrd; ctx!.fill();
+        ctx!.shadowBlur = 0;
+        drawStar(mx, my, 5, bigR * 0.6 * pulse, bigIR * 0.5 * pulse, bigRot);
+        ctx!.fillStyle = "rgba(255,255,255,1)"; ctx!.fill();
+        ctx!.restore();
+      }
+
+      animId = requestAnimationFrame(draw);
+    }
+    draw();
+
+    document.addEventListener("mousemove", onMouse);
+    document.addEventListener("touchstart", onTouchStart, { passive: true });
+    document.addEventListener("touchmove", onTouchMove, { passive: true });
+    document.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("resize", resize);
+    return () => {
+      cancelAnimationFrame(animId);
+      document.removeEventListener("mousemove", onMouse);
+      document.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+  return <canvas ref={canvasRef} className="fixed inset-0 z-[9999]" style={{ pointerEvents: "none" }} />;
+}
+
 // ─── ConstellationBackground ─────────────────────────────────────────────────
 
 function ConstellationBackground() {
@@ -667,8 +804,9 @@ export default function InvisibleArchitecture() {
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
-      <div className="min-h-screen relative" style={{ fontFamily: '"JetBrains Mono", "Courier New", monospace', color: "#e0e0e0" }}>
+      <div className="min-h-screen relative" style={{ fontFamily: '"JetBrains Mono", "Courier New", monospace', color: "#e0e0e0", cursor: "crosshair" }}>
         <ConstellationBackground />
+        <CometCursor />
         <div className="relative z-10 max-w-[960px] mx-auto px-4 sm:px-6 py-8">
 
           {/* Navigation bar */}

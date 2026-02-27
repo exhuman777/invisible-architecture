@@ -1068,14 +1068,18 @@
   let catchTime=0; // when comet first caught the cursor
   let wasCaught=false;
   function rt(){tc.width=innerWidth;tc.height=innerHeight;}rt();addEventListener('resize',rt);
-  document.addEventListener('mousemove',e=>{
+  function onPointerInput(x,y){
     const now=Date.now(), dt=now-lastMoveT||16;
-    const dx=e.clientX-mx, dy=e.clientY-my;
+    const dx=x-mx, dy=y-my;
     speed=Math.sqrt(dx*dx+dy*dy)/(dt/16);
-    mx=e.clientX; my=e.clientY; lastMoveT=now;
-    trail.push({x:e.clientX,y:e.clientY,t:now});
+    mx=x; my=y; lastMoveT=now;
+    trail.push({x,y,t:now});
     if(trail.length>TL)trail.shift();
-  });
+  }
+  document.addEventListener('mousemove',e=>onPointerInput(e.clientX,e.clientY));
+  document.addEventListener('touchstart',e=>{const t=e.touches[0];if(t){mx=t.clientX;my=t.clientY;lastMoveT=Date.now();}},{passive:true});
+  document.addEventListener('touchmove',e=>{const t=e.touches[0];if(t)onPointerInput(t.clientX,t.clientY);},{passive:true});
+  document.addEventListener('touchend',()=>{lastMoveT=Date.now();speed=0;},{passive:true});
 
   function drawStar(cx,cy,spikes,outerR,innerR,rot){
     tC.beginPath();
