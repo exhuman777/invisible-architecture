@@ -6,30 +6,56 @@ Stan na: 7.11.2026. Część działu [Niewidzialna Architektura](https://tukamil
 
 ## Mój zestaw
 
-Wszystko poniżej pochodzi z repozytoriów, na których pracuję codziennie: z ich plików `CLAUDE.md`, README i testów. Bez teorii, tylko to, co działa u mnie.
+Wszystko poniżej pochodzi z repozytoriów, na których pracuję codziennie: z ich plików `AGENTS.md`, README i testów. Bez teorii, tylko to, co działa u mnie.
 
 | Warstwa | Co używam |
 |---|---|
 | Agent do kodu | Claude Code |
-| Instrukcje | `CLAUDE.md` w każdym repozytorium |
+| Instrukcje | `AGENTS.md` w każdym repozytorium, `CLAUDE.md` z jedną linią `@AGENTS.md` |
 | Kod | GitHub, jedna gałąź na zadanie, pull request |
 | Hosting | Vercel |
 | Strony | statyczny HTML, CSS i JS, bez frameworka, gdzie się da |
 | Testy | Playwright: 1280, 390 i 360 px |
 | SEO i modele AI | `llms.txt`, wersja `.md` każdej strony, JSON-LD, sitemap |
 
-## Claude Code i CLAUDE.md
+## AGENTS.md w każdym repozytorium
 
-Każde moje repozytorium ma `CLAUDE.md`. Są w nim zasady, których agent ma się trzymać zawsze, np.:
+Każde moje repozytorium i każdy folder firmy klienta trzyma instrukcje w jednym pliku: [`AGENTS.md`](https://agents.md/). `CLAUDE.md` ma jedną linię `@AGENTS.md`, więc Claude Code czyta to samo co Codex, Cursor czy Copilot. Dlaczego import, a nie samo `AGENTS.md`: [CLAUDE.md i AGENTS.md](https://tukamil.com/niewidzialna-architektura/claude-md/#agents-md-jeden-plik-dla-wszystkich-agentow).
+
+W `AGENTS.md` są zasady, których agent ma się trzymać zawsze, np.:
 
 - teksty po polsku z pełnymi znakami, bez długich myślników i sloganów;
 - fakty tylko ze źródeł, a czego nie da się potwierdzić, tego nie ma;
 - sekrety nigdy w repozytorium;
 - lista poleceń, które muszą przejść przed commitem.
 
-W aplikacji na Next.js plik `CLAUDE.md` zawiera jedną linię `@AGENTS.md`, czyli importuje wspólne instrukcje, które czytają też inne narzędzia.
+Podkatalog z innymi zasadami (np. prezentacja w osobnym katalogu) ma własny `AGENTS.md`. Działa najbliższy plik.
 
 Agenci w moich projektach piszą szkice. Wysyła człowiek. Mam też własne skille Claude do sprzedaży, na których pracuję codziennie: plan dnia, lista telefonów, notatka po rozmowie, oferta, mailing jako szkice w Gmailu.
+
+## Agencja Agentów: ta sama metoda u klientów
+
+[Agencja Agentów](https://www.cyfrowypomocnik.com/#agenci) to mój katalog gotowych agentów Claude pod branżę: plan dnia, zapytania, marketing, finanse, oferty. Klient dostaje folder firmy w prywatnym repozytorium na GitHubie i zatrudnia agentów z katalogu. Folder jest zbudowany na otwartych standardach, więc nie zależy od jednego narzędzia AI.
+
+| Plik | Co w nim jest | Standard |
+|---|---|---|
+| `AGENTS.md` | rola agenta, zasady, mapa plików | [AGENTS.md](https://agents.md/) |
+| `CLAUDE.md` | jedna linia `@AGENTS.md` | [pamięć Claude Code](https://code.claude.com/docs/en/memory) |
+| `FIRMA.md`, `DECYZJE.md`, `STYL.md` | kim jest firma, reguły z datą i powodem, jak piszemy | zwykły Markdown |
+| `ZESPOL.md`, `OBSZARY/` | zatrudnieni agenci, cel i metoda każdego | zwykły Markdown |
+| `WIEDZA/` | książki, notatki, kursy właściciela ze spisem | zwykły Markdown |
+| `skills/<nazwa>/SKILL.md` w pakietach | umiejętności agentów (polecenia) | [Agent Skills](https://agentskills.io/) |
+| `.claude-plugin/plugin.json` | pakiet agenta do zatrudnienia | [pluginy Claude Code](https://code.claude.com/docs/en/plugins) |
+| `.claude/settings.json` | blokady i hooki: bez wysyłania, bez kasowania | [ustawienia](https://code.claude.com/docs/en/settings) i [hooki](https://code.claude.com/docs/en/hooks) |
+| konektory Claude (poczta, kalendarz, dysk) | dostęp do narzędzi firmy | [MCP](https://modelcontextprotocol.io/) |
+
+Dlaczego tak:
+
+- **Jedno źródło instrukcji.** Zasady są w `AGENTS.md`, nie w kilku plikach, które się rozjeżdżają.
+- **Dane osobno od zasad.** `AGENTS.md` mówi, gdzie co leży i kiedy to czytać. Fakty o firmie są w `FIRMA.md`, reguły w `DECYZJE.md`.
+- **Instrukcja to kontekst, blokada to ustawienie.** To, czego agent nie może zrobić nigdy (wysłać maila, skasować pliku), pilnują uprawnienia i hooki, nie samo zdanie w pliku.
+- **Wiedza zostaje w firmie.** Zwykłe pliki w repozytorium klienta działają w Claude Code, Codex, Cursor i Gemini CLI. Zmiana narzędzia AI nie kasuje wiedzy.
+- **Nic nie ginie przy zmianie.** Starsze foldery z instrukcjami w `CLAUDE.md` przechodzą na `AGENTS.md` 1:1 przy aktualizacji agentów.
 
 ## Strony statyczne
 
@@ -94,6 +120,6 @@ Chcesz to u siebie w firmie? [4 godziny wdrożenia](https://tukamil.com/wdrozeni
 - [Chcesz to u siebie w firmie? 4 godziny wdrożenia](https://tukamil.com/wdrozenie-ai/)
 - [llms.txt](https://tukamil.com/llms.txt)
 
-Na podstawie: nowy rozdział, fakty z repozytoriów Kamila (CLAUDE.md, README, testy) z [The Invisible Architecture](https://github.com/exhuman777/invisible-architecture).
+Na podstawie: nowy rozdział, fakty z repozytoriów Kamila (AGENTS.md, README, testy) z [The Invisible Architecture](https://github.com/exhuman777/invisible-architecture).
 
 Wersja na stronie: https://tukamil.com/niewidzialna-architektura/jak-to-robie/

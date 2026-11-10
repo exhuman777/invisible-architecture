@@ -8,10 +8,11 @@ Every AI coding tool reads a project instruction file automatically:
 
 | Tool | File |
 |------|------|
-| Claude Code | `CLAUDE.md` |
-| Cursor | `.cursorrules` |
-| GitHub Copilot | `.github/copilot-instructions.md` |
-| Windsurf | `.windsurfrules` |
+| Claude Code | `CLAUDE.md` (reads `AGENTS.md` itself when there is no `CLAUDE.md`) |
+| Codex, Cursor, Gemini CLI, Jules, Aider, Zed and many more | `AGENTS.md` |
+| GitHub Copilot | `.github/copilot-instructions.md`, `AGENTS.md` |
+
+Updated 10.11.2026: `.cursorrules` and `.windsurfrules` are legacy. The shared open standard is [`AGENTS.md`](https://agents.md/) (see below).
 
 The AI reads this file before every interaction. Your conventions, preferences, stack details, gotchas, all loaded into context automatically. Without one, the AI guesses. With one, the AI knows.
 
@@ -211,20 +212,25 @@ Even 10 lines beats nothing. The AI knows the framework, build tool, and compone
 
 **Never updating.** CLAUDE.md should evolve. Found a bug the AI keeps making? Add it to gotchas. Changed a convention? Update the file.
 
-## .cursorrules vs CLAUDE.md
+## AGENTS.md: one file for every agent
 
-Same concept, different tools. Two strategies:
+[AGENTS.md](https://agents.md/) is an open standard: a README for agents. Since December 2025 it is stewarded by the Agentic AI Foundation (Linux Foundation), alongside MCP.
 
-**Single source:** Write CLAUDE.md, symlink or copy to .cursorrules.
+- Plain Markdown, no required fields.
+- Root file plus optional nested `AGENTS.md` per sub-project: the closest file wins, an explicit chat prompt overrides everything.
+- Test and lint commands listed in it get run by the agent, which fixes failures before finishing.
+- Living documentation: update it with the code.
 
-```bash
-# Symlink approach
-ln -s CLAUDE.md .cursorrules
+Recommended setup with Claude Code:
+
+```text
+AGENTS.md     all project instructions (single source of truth)
+CLAUDE.md     one line: @AGENTS.md
 ```
 
-**Separate files:** Different tools have different strengths. Cursor-specific rules (composer behavior, tab completion preferences) go in .cursorrules. Claude Code-specific rules (MCP config, CLI behavior) go in CLAUDE.md. Shared conventions go in both.
+Claude Code (v2.1.277+) reads `AGENTS.md` on its own only when the project has no `CLAUDE.md` or `CLAUDE.local.md`, so one private `CLAUDE.local.md` silently switches it off. The `@AGENTS.md` import works in every version and every session, and the [Claude Code docs](https://code.claude.com/docs/en/memory) recommend it where native `AGENTS.md` reading is unavailable. agents.md suggests a symlink when migrating; the import is safer because symlinks break on Windows and when folders are copied.
 
-Recommendation: maintain CLAUDE.md as the source of truth. Copy relevant sections to .cursorrules if your team uses both tools.
+How this looks in practice, including a whole agency of client agents built on it: [Jak to robię u siebie](https://tukamil.com/niewidzialna-architektura/jak-to-robie/) (Polish).
 
 ## Layered CLAUDE.md
 
