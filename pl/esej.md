@@ -393,7 +393,7 @@ Poradnik: [Agenci AI w firmie](https://tukamil.com/niewidzialna-architektura/age
 
 ## Jak to robię u siebie
 
-Claude Code z plikiem CLAUDE.md w każdym repozytorium, statyczne strony na Vercel, ścisłe CSP i testy Playwright na trzech szerokościach. Ta strona powstała dokładnie tak.
+Claude Code z AGENTS.md w każdym repozytorium, statyczne strony na Vercel, ścisłe CSP i testy Playwright na trzech szerokościach. Ta strona i moja Agencja Agentów powstały dokładnie tak.
 
 - [Cały rozdział: jak to robię u siebie](https://tukamil.com/niewidzialna-architektura/jak-to-robie/)
 - [Zacznij od tego: Claude Start](https://start.cyfrowypomocnik.com/)
@@ -424,7 +424,8 @@ Oryginał po angielsku powstał w lutym 2026 roku. Każdy fakt o narzędziach, m
 - Było: Serwery referencyjne github, postgres, sqlite, brave-search, puppeteer, slack. Jest: W repozytorium referencyjnym zostało 7 serwerów, reszta w archiwum; GitHub ma własny serwer github/github-mcp-server. [Źródło](https://github.com/modelcontextprotocol/servers)
 - Było: Globalna konfiguracja MCP w ~/.claude/mcp.json. Jest: claude mcp add z zasięgiem local, project (.mcp.json) albo user (~/.claude.json). [Źródło](https://code.claude.com/docs/en/mcp)
 - Było: Karpathy ukuł „vibecoding” na początku 2024. Jest: Wpis Karpathy’ego na X z lutego 2025; słowo roku 2025 słownika Collinsa. [Źródło](https://www.questera.ai/blogs/history-of-vibe-coding-karpathy-tweet)
-- Było: .cursorrules i .windsurfrules jako pliki instrukcji. Jest: Cursor: .cursor/rules i AGENTS.md; Copilot: .github/copilot-instructions.md, AGENTS.md, CLAUDE.md; Claude Code może czytać AGENTS.md. [Źródło](https://cursor.com/docs/context/rules)
+- Było: .cursorrules i .windsurfrules jako pliki instrukcji. Jest: Cursor: .cursor/rules i AGENTS.md; Copilot: .github/copilot-instructions.md, AGENTS.md, CLAUDE.md; Claude Code czyta AGENTS.md, gdy w projekcie nie ma CLAUDE.md. [Źródło](https://cursor.com/docs/context/rules)
+- Było: CLAUDE.md jako główny plik instrukcji w każdym projekcie. Jest: AGENTS.md jako jedno źródło instrukcji dla wszystkich agentów, CLAUDE.md z importem @AGENTS.md (działa w każdej wersji Claude Code). [Źródło](https://code.claude.com/docs/en/memory)
 - Było: Agent Skills v1.0 „w drugiej połowie 2026”, liczby gwiazdek na GitHubie. Jest: Agent Skills jako otwarty format na agentskills.io; liczby gwiazdek usunięte (zmieniają się codziennie). [Źródło](https://agentskills.io/)
 - Było: A2A w wersji 0.3. Jest: A2A w wersji 1.0, dołączył do Agentic AI Foundation. [Źródło](https://a2a-protocol.org/latest/)
 - Było: GitHub: 100 mln programistów, 420 mln repozytoriów. Jest: Ponad 225 mln programistów i ponad 800 mln repozytoriów. [Źródło](https://github.com/about)

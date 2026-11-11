@@ -25,6 +25,7 @@ What started as a poetic visual essay about web infrastructure (`index.html`, 13
 invisible-architecture/
 ├── index.html                    # Interactive visual essay (13 chapters)
 ├── README.md                     # You are here
+├── AGENTS.md                     # Instructions for coding agents (agents.md); CLAUDE.md = @AGENTS.md
 │
 ├── guides/
 │   ├── vibecoding-playbook.md    # Core vibecoding methodology
@@ -84,11 +85,31 @@ Complete stack blueprints by project type. Each file walks through a specific ar
 
 ## For AI Agents
 
+This repo follows the [AGENTS.md](https://agents.md/) standard: instructions for coding agents working on it live in [`AGENTS.md`](AGENTS.md), and `CLAUDE.md` is one line, `@AGENTS.md`. How and why: [`patterns/claude-md.md`](patterns/claude-md.md#agentsmd-one-file-for-every-agent).
+
 The `.agent/` directory contains structured, machine-readable context designed for AI coding assistants.
 
 See [`.agent/README.md`](.agent/README.md) for loading instructions.
 
 Key idea: agents should load `vibecoding-rules.md` as base context, then selectively load YAML files based on the user's task. The YAML files provide structured data that agents can reason over without parsing prose.
+
+---
+
+## In practice: Agencja Agentów
+
+The same method runs my agent agency, [Agencja Agentów](https://www.cyfrowypomocnik.com/#agenci): ready-made Claude agents for small businesses, installed into a private company folder on GitHub. Each folder uses open standards only:
+
+| File | What | Standard |
+|---|---|---|
+| `AGENTS.md` | agent role, rules, file map | [AGENTS.md](https://agents.md/) |
+| `CLAUDE.md` | one line `@AGENTS.md` | [Claude Code memory](https://code.claude.com/docs/en/memory) |
+| `FIRMA.md`, `DECYZJE.md`, `STYL.md`, `WIEDZA/` | company facts, dated decisions, writing style, owner's knowledge | plain Markdown |
+| `skills/<name>/SKILL.md` | agent skills (commands) | [Agent Skills](https://agentskills.io/) |
+| `.claude-plugin/plugin.json` | an agent package to "hire" | [Claude Code plugins](https://code.claude.com/docs/en/plugins) |
+| `.claude/settings.json` | hard blocks and hooks: no sending, no deleting | [settings](https://code.claude.com/docs/en/settings), [hooks](https://code.claude.com/docs/en/hooks) |
+| connectors | mail, calendar, drive | [MCP](https://modelcontextprotocol.io/) |
+
+Agents only write drafts; a human sends. Full walkthrough in Polish: [Jak to robię u siebie](https://tukamil.com/niewidzialna-architektura/jak-to-robie/#agencja-agentow-ta-sama-metoda-u-klientow).
 
 ---
 

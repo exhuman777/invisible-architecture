@@ -21,7 +21,7 @@ Na stronie, z interakcjami i kursorem kometa: https://tukamil.com/niewidzialna-a
 - [debugowanie.md](debugowanie.md): Debugowanie z AI. Jak szukać błędów z AI szybciej, nie tracąc rozumienia kodu. (na podstawie: patterns/debugging-with-ai.md)
 - [nowy-projekt.md](nowy-projekt.md): Nowy projekt z AI. Dziesięć minut przygotowania, które oszczędzają godziny poprawek. (na podstawie: patterns/project-scaffolding.md)
 - [stosy.md](stosy.md): Gotowe stosy. Cztery przepisy z poleceniami, kluczowym kodem i szablonem CLAUDE.md. (na podstawie: stacks/static-site.md, stacks/solo-saas.md, stacks/ai-app.md, stacks/api-service.md)
-- [jak-to-robie.md](jak-to-robie.md): Jak to robię u siebie. Claude Code, statyczne strony na Vercel, ścisłe CSP i testy Playwright. (na podstawie: nowy rozdział, fakty z repozytoriów Kamila (CLAUDE.md, README, testy))
+- [jak-to-robie.md](jak-to-robie.md): Jak to robię u siebie. Claude Code, statyczne strony na Vercel, ścisłe CSP i testy Playwright. (na podstawie: nowy rozdział, fakty z repozytoriów Kamila (AGENTS.md, README, testy))
 
 ## Co się zmieniło względem wersji angielskiej
 
@@ -31,7 +31,8 @@ Na stronie, z interakcjami i kursorem kometa: https://tukamil.com/niewidzialna-a
 - Było: Serwery referencyjne github, postgres, sqlite, brave-search, puppeteer, slack. Jest: W repozytorium referencyjnym zostało 7 serwerów, reszta w archiwum; GitHub ma własny serwer github/github-mcp-server. Źródło: https://github.com/modelcontextprotocol/servers
 - Było: Globalna konfiguracja MCP w ~/.claude/mcp.json. Jest: claude mcp add z zasięgiem local, project (.mcp.json) albo user (~/.claude.json). Źródło: https://code.claude.com/docs/en/mcp
 - Było: Karpathy ukuł „vibecoding” na początku 2024. Jest: Wpis Karpathy’ego na X z lutego 2025; słowo roku 2025 słownika Collinsa. Źródło: https://www.questera.ai/blogs/history-of-vibe-coding-karpathy-tweet
-- Było: .cursorrules i .windsurfrules jako pliki instrukcji. Jest: Cursor: .cursor/rules i AGENTS.md; Copilot: .github/copilot-instructions.md, AGENTS.md, CLAUDE.md; Claude Code może czytać AGENTS.md. Źródło: https://cursor.com/docs/context/rules
+- Było: .cursorrules i .windsurfrules jako pliki instrukcji. Jest: Cursor: .cursor/rules i AGENTS.md; Copilot: .github/copilot-instructions.md, AGENTS.md, CLAUDE.md; Claude Code czyta AGENTS.md, gdy w projekcie nie ma CLAUDE.md. Źródło: https://cursor.com/docs/context/rules
+- Było: CLAUDE.md jako główny plik instrukcji w każdym projekcie. Jest: AGENTS.md jako jedno źródło instrukcji dla wszystkich agentów, CLAUDE.md z importem @AGENTS.md (działa w każdej wersji Claude Code). Źródło: https://code.claude.com/docs/en/memory
 - Było: Agent Skills v1.0 „w drugiej połowie 2026”, liczby gwiazdek na GitHubie. Jest: Agent Skills jako otwarty format na agentskills.io; liczby gwiazdek usunięte (zmieniają się codziennie). Źródło: https://agentskills.io/
 - Było: A2A w wersji 0.3. Jest: A2A w wersji 1.0, dołączył do Agentic AI Foundation. Źródło: https://a2a-protocol.org/latest/
 - Było: GitHub: 100 mln programistów, 420 mln repozytoriów. Jest: Ponad 225 mln programistów i ponad 800 mln repozytoriów. Źródło: https://github.com/about
@@ -52,4 +53,4 @@ Na stronie, z interakcjami i kursorem kometa: https://tukamil.com/niewidzialna-a
 - Google Domains (sprzedane), Quirrel, Glama, LanceDB, Turbopuffer, Augment Code, Vultr, Namecheap i licznik odwiedzin: oficjalna strona nie dała się sprawdzić albo pozycja nie wnosi treści.
 - Opis Lucia Auth, WorkOS, BetterStack, Payload i Replicate ze starego dziennika zmian: bez potwierdzenia na stronach producentów.
 
-Źródło prawdy dla tych plików: dział Niewidzialna Architektura na tukamil.com. Angielskie pliki w katalogach guides/, reference/, patterns/, stacks/ i .agent/ zostają bez zmian.
+Źródło prawdy dla tych plików: dział Niewidzialna Architektura na tukamil.com. Angielskie pliki w katalogach guides/, reference/, patterns/, stacks/ i .agent/ zostają bez zmian, poza patterns/claude-md.md (rozdział o AGENTS.md, 10.11.2026).

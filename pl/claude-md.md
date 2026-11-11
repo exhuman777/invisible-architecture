@@ -10,7 +10,7 @@ Każde narzędzie AI do kodu czyta plik z instrukcjami projektu na starcie sesji
 
 | Narzędzie | Plik |
 |---|---|
-| Claude Code | `CLAUDE.md` albo `.claude/CLAUDE.md`, reguły w `.claude/rules/`, może też czytać `AGENTS.md` |
+| Claude Code | `CLAUDE.md` albo `.claude/CLAUDE.md`, reguły w `.claude/rules/`; sam `AGENTS.md`, gdy w projekcie nie ma `CLAUDE.md` |
 | Codex, Cursor, Gemini CLI, Aider i inne | `AGENTS.md` (Gemini CLI ma też `GEMINI.md`) |
 | GitHub Copilot | `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`, `AGENTS.md` |
 | Cursor | `.cursor/rules` albo `AGENTS.md` |
@@ -119,9 +119,29 @@ Dodatkowo:
 
 Instrukcje w `CLAUDE.md` to kontekst, nie twarda blokada. Jeśli coś ma być zablokowane bez wyjątków, użyj hooka albo ustawień uprawnień.
 
-## Jeden plik dla wielu narzędzi
+## AGENTS.md: jeden plik dla wszystkich agentów
 
-Pracujesz z kilkoma narzędziami? Trzymaj wspólne zasady w `AGENTS.md`, które czyta większość z nich, a w `CLAUDE.md` zostaw to, co dotyczy tylko Claude Code, albo zaimportuj `AGENTS.md` przez `@AGENTS.md`.
+[AGENTS.md](https://agents.md/) to otwarty standard: README dla agentów. Od grudnia 2025 prowadzi go Agentic AI Foundation w Linux Foundation, razem z MCP. Czytają go Codex, Cursor, Copilot, Gemini CLI, Jules, Aider, Zed, Warp i wiele innych narzędzi.
+
+Zasady standardu:
+
+- zwykły Markdown, bez wymaganych pól i nagłówków;
+- plik leży w katalogu głównym, a podprojekt może mieć własny `AGENTS.md`: działa najbliższy plik, a polecenie w rozmowie wygrywa ze wszystkim;
+- komendy testów wpisane w plik agent uruchamia sam i poprawia błędy, zanim skończy zadanie;
+- to żywa dokumentacja: poprawiasz ją razem z kodem.
+
+Jak go połączyć z Claude Code:
+
+```text
+AGENTS.md     wszystkie instrukcje projektu (jedyne źródło)
+CLAUDE.md     jedna linia: @AGENTS.md
+```
+
+Claude Code od wersji 2.1.277 czyta `AGENTS.md` sam, ale tylko wtedy, gdy w projekcie nie ma `CLAUDE.md` ani `CLAUDE.local.md`. Jeden `CLAUDE.local.md` z prywatnymi notatkami wyłącza więc `AGENTS.md`. Import `@AGENTS.md` w `CLAUDE.md` działa w każdej wersji i w każdej sesji, a dokumentacja Claude Code poleca go tam, gdzie samo czytanie `AGENTS.md` nie działa. Dlatego go używam.
+
+Strona agents.md przy przenoszeniu starego pliku proponuje dowiązanie (symlink). Import jest pewniejszy, bo dowiązania psują się na Windowsie i przy kopiowaniu folderu.
+
+Tak pracuję we wszystkich repozytoriach i w folderach firm moich klientów: [Jak to robię u siebie](https://tukamil.com/niewidzialna-architektura/jak-to-robie/).
 
 ## Pielęgnacja
 
@@ -134,7 +154,7 @@ Popraw plik, gdy:
 
 Najlepszy `CLAUDE.md` czyta się jak notatkę, którą zostawiłbyś sobie przed tygodniowym urlopem. Krótko, praktycznie, bez waty.
 
-Dokumentacja: [pamięć w Claude Code](https://code.claude.com/docs/en/memory), [AGENTS.md](https://agents.md/).
+Dokumentacja: [pamięć w Claude Code](https://code.claude.com/docs/en/memory) (rozdział o AGENTS.md), [AGENTS.md](https://agents.md/).
 
 ## Gdzie dalej
 

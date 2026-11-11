@@ -21,9 +21,11 @@ Agent potrzebuje warstw:
 ## Agenci w firmie: zasady, które się sprawdzają
 
 - **Agent pisze szkic, człowiek wysyła.** Maile, oferty, posty i zmiany w systemach przechodzą przez akceptację.
-- **Jedno źródło prawdy.** Wiedza firmy leży w plikach w repozytorium (opis firmy, styl, decyzje, obietnice), a agent czyta je na starcie.
+- **Jedno źródło prawdy.** Wiedza firmy leży w plikach w repozytorium (opis firmy, styl, decyzje, obietnice), a agent czyta je na starcie. Instrukcje agenta są w jednym `AGENTS.md` ([standard](https://agents.md/)), który czyta każde narzędzie AI.
 - **Uprawnienia minimalne.** Agent dostaje tylko te narzędzia, których potrzebuje do zadania. Dostęp do odczytu tam, gdzie zapis nie jest konieczny.
 - **Ślad.** Każda zmiana agenta to commit albo wpis w historii, więc wiesz, kto i co zmienił, i możesz to cofnąć.
+
+Tak zbudowana jest moja [Agencja Agentów](https://www.cyfrowypomocnik.com/#agenci): folder firmy z `AGENTS.md`, `FIRMA.md` i `DECYZJE.md`, agenci z katalogu robią szkice. Plik po pliku: [Jak to robię u siebie](https://tukamil.com/niewidzialna-architektura/jak-to-robie/#agencja-agentow-ta-sama-metoda-u-klientow).
 
 Chcesz to u siebie w firmie? [Wdrożenie AI w 4 godziny](https://tukamil.com/wdrozenie-ai/).
 
