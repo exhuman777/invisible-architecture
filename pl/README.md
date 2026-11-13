@@ -21,6 +21,7 @@ Na stronie, z interakcjami i kursorem kometa: https://tukamil.com/niewidzialna-a
 - [debugowanie.md](debugowanie.md): Debugowanie z AI. Jak szukać błędów z AI szybciej, nie tracąc rozumienia kodu. (na podstawie: patterns/debugging-with-ai.md)
 - [nowy-projekt.md](nowy-projekt.md): Nowy projekt z AI. Dziesięć minut przygotowania, które oszczędzają godziny poprawek. (na podstawie: patterns/project-scaffolding.md)
 - [stosy.md](stosy.md): Gotowe stosy. Cztery przepisy z poleceniami, kluczowym kodem i szablonem CLAUDE.md. (na podstawie: stacks/static-site.md, stacks/solo-saas.md, stacks/ai-app.md, stacks/api-service.md)
+- [claude-code-stan.md](claude-code-stan.md): Claude Code: stan na 13.11.2026. Skille, subagenci, hooki, wtyczki, pamięć i uprawnienia w Claude Code, sprawdzone w dokumentacji jednego dnia. Stan na 13.11.2026, pozostałe pliki 7.11.2026. (na podstawie: reference/claude-code-state-2026-11.md)
 - [jak-to-robie.md](jak-to-robie.md): Jak to robię u siebie. Claude Code, statyczne strony na Vercel, ścisłe CSP i testy Playwright. (na podstawie: nowy rozdział, fakty z repozytoriów Kamila (AGENTS.md, README, testy))
 
 ## Co się zmieniło względem wersji angielskiej

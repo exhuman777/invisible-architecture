@@ -1,6 +1,6 @@
 # The Invisible Architecture
 
-> **Po polsku:** Niewidzialna Architektura to baza wiedzy dla vibecoderów: esej w 13 rozdziałach o tym, jak działa internet (DNS, API, GitHub, kontenery, bazy, serwery, serverless, CDN, MCP i AI), i 15 poradników o vibecodingu, MCP, agentach AI i wyborze stosu. Polska wersja, przetłumaczona i sprawdzona na oficjalnych stronach 7.11.2026, leży w katalogu [`pl/`](pl/README.md), a na stronie z interakcjami czytasz ją na **[tukamil.com/niewidzialna-architektura](https://tukamil.com/niewidzialna-architektura/)**. Zacznij od [eseju](pl/esej.md) albo [MCP po polsku](pl/mcp.md).
+> **Po polsku:** Niewidzialna Architektura to baza wiedzy dla vibecoderów: esej w 13 rozdziałach o tym, jak działa internet (DNS, API, GitHub, kontenery, bazy, serwery, serverless, CDN, MCP i AI), i 16 poradników o vibecodingu, MCP, agentach AI i wyborze stosu. Polska wersja, przetłumaczona i sprawdzona na oficjalnych stronach 7.11.2026, leży w katalogu [`pl/`](pl/README.md), a na stronie z interakcjami czytasz ją na **[tukamil.com/niewidzialna-architektura](https://tukamil.com/niewidzialna-architektura/)**. Zacznij od [eseju](pl/esej.md) albo [MCP po polsku](pl/mcp.md).
 
 **A vibecoding knowledge base for the modern web**
 
@@ -54,7 +54,7 @@ invisible-architecture/
 │   ├── static-site.md            # Static/portfolio stack
 │   └── api-service.md            # API backend stack
 │
-├── pl/                           # Polska wersja (esej + 15 poradników), tukamil.com/niewidzialna-architektura
+├── pl/                           # Polska wersja (esej + 16 poradników), tukamil.com/niewidzialna-architektura
 │
 └── .agent/
     ├── README.md                 # Agent loading instructions
