@@ -2,9 +2,9 @@
 
 A dated snapshot of how Claude Code packages skills, subagents, hooks, plugins, memory, permissions, scheduling, headless runs and MCP, plus where the open standards (AGENTS.md, Agent Skills) stand and which other agent platforms read the same files.
 
-Every statement below was read on the vendor's own page on 13 Nov 2026. `[UNCONFIRMED]` means the page did not state it or did not load. No prices here: see https://claude.com/pricing.
+Every statement below was read on the vendor's own page on 13 Nov 2026 and re-checked the same day for the Polish edition. What could not be confirmed is listed at the end. No prices here: see https://claude.com/pricing.
 
-Claude Code version on that day: 2.1.323, released 12 Nov 2026 ([changelog](https://code.claude.com/docs/en/changelog)).
+Latest Claude Code version on that day: 2.1.325, released 13 Nov 2026 ([changelog](https://code.claude.com/docs/en/changelog)).
 
 ## Skills
 
@@ -41,12 +41,12 @@ Practical consequence: an instruction in a memory file is context, not a block. 
 Sources: https://code.claude.com/docs/en/plugins/manifest-reference, https://code.claude.com/docs/en/plugins/create-marketplace, https://code.claude.com/docs/en/plugins/cli-reference
 
 - Layout: manifest at `.claude-plugin/plugin.json`; everything else at the plugin root: `skills/`, `agents/`, `commands/`, `hooks/hooks.json`, `.mcp.json`.
-- The only required manifest field is `name`. `version` pins the installed version, so bump it or updates will not be picked up.
+- The manifest is optional; if present, the only required field is `name`. `version` pins the installed version, so bump it or updates will not be picked up.
 - A `CLAUDE.md` at the plugin root is not loaded as context. Use a skill.
 - Marketplace: `.claude-plugin/marketplace.json` with `name`, `owner.name` and `plugins[]` (`name`, `source`).
 - Commands: `claude plugin marketplace add <owner>/<repo>` (or a local path), `claude plugin install <plugin>@<marketplace> --scope user|project|local`, `claude plugin validate <path>`.
 - Plugin skills and commands are namespaced: `/plugin-name:skill`.
-- Authentication for a marketplace in a private repository: `[UNCONFIRMED]` (the hosting page returned 404 on the day).
+- Marketplace in a private repository: Claude Code runs `git` on the user's machine with the credentials already there (SSH key in `ssh-agent`, or a stored HTTPS credential, e.g. after `gh auth login` and `gh auth setup-git`). `marketplace.json` has no token field. Source: https://code.claude.com/docs/en/plugins/host-marketplace
 
 ## Memory
 
@@ -54,8 +54,8 @@ Source: https://code.claude.com/docs/en/memory
 
 - `CLAUDE.md` is loaded from the working directory and its ancestors; `~/.claude/CLAUDE.md` applies to all projects. Imports use `@path`, up to four hops. Under 200 lines per file is recommended.
 - `.claude/rules/*.md` can be scoped to file globs with `paths:`.
-- Auto memory lives in `~/.claude/projects/<project>/memory/`; the first 200 lines or 25 KB of `MEMORY.md` are loaded. It is local to one machine. Disable with `autoMemoryEnabled: false`.
-- When Claude Code reads `AGENTS.md` on its own: `[UNCONFIRMED]` in this reading. A one-line `CLAUDE.md` containing `@AGENTS.md` works regardless; see [`patterns/claude-md.md`](../patterns/claude-md.md).
+- Auto memory lives in `~/.claude/projects/<project>/memory/`; the first 200 lines or 25 KB of `MEMORY.md` are loaded. Disable with `autoMemoryEnabled: false` or `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`.
+- Since 2.1.277 Claude Code reads `AGENTS.md` on its own when there is no `CLAUDE.md` or `CLAUDE.local.md` in the working directory or above it. A one-line `CLAUDE.md` containing `@AGENTS.md` works in both cases; see [`patterns/claude-md.md`](../patterns/claude-md.md).
 
 ## Permissions and sandboxing
 
@@ -70,8 +70,8 @@ Sources: https://code.claude.com/docs/en/permissions, https://code.claude.com/do
 Sources: https://code.claude.com/docs/en/scheduled-tasks, https://code.claude.com/docs/en/routines, https://code.claude.com/docs/en/headless
 
 - `/loop` runs inside an open session and expires after seven days.
-- Desktop scheduled tasks run locally and need the computer on. Cloud routines run on a fresh clone of the repository without local files.
-- `claude -p "<prompt>"` with `--output-format text|json|stream-json`. `--bare` skips hooks, skills, plugins, MCP and `CLAUDE.md`, and requires `ANTHROPIC_API_KEY`. In `--bare` runs, file-based rules and guard hooks do not apply.
+- Desktop scheduled tasks run locally and need the computer on. Cloud scheduled tasks (formerly "routines", marked as a research preview) run on a fresh clone of the repository without local files.
+- `claude -p "<prompt>"` with `--output-format text|json|stream-json`. `--bare` skips hooks, skills, custom commands, subagents, plugins, MCP, auto memory and `CLAUDE.md`, and requires `ANTHROPIC_API_KEY` or `apiKeyHelper`. In `--bare` runs, file-based rules and guard hooks do not apply.
 
 ## Installation
 
@@ -87,7 +87,7 @@ Source: https://code.claude.com/docs/en/setup
 Sources: https://code.claude.com/docs/en/mcp, https://modelcontextprotocol.io/specification/latest
 
 - `claude mcp add --transport http <name> <url>`; stdio servers via `claude mcp add <name> -- <command>`. Scopes: `local`, `project` (`.mcp.json`, committed), `user`.
-- The specification's "latest" page points to schema `2026-07-28`. Publication date: `[UNCONFIRMED]`.
+- The specification's "latest" page points to schema `2026-07-28`. Publication date: not stated on the page.
 
 ## Open standards and who reads them
 
@@ -110,7 +110,7 @@ Source: https://agentskills.io/
 
 | Platform | AGENTS.md | SKILL.md folders | Tool-call hooks | Source |
 |---|---|---|---|---|
-| Hermes Agent | project instructions file (per the superpowers reference mapping) | `~/.hermes/skills/`, `skills.external_dirs`, `<project>/.hermes/skills/`, `<project>/.agents/skills/` after `hermes skills trust`; docs state compatibility with agentskills.io | `[UNCONFIRMED]` | https://hermes-agent.nousresearch.com/docs/user-guide/features/skills, https://github.com/obra/superpowers |
+| Hermes Agent | main project context file; `.hermes.md` and `AGENTS.override.md` take precedence | `~/.hermes/skills/`, `skills.external_dirs`, `<project>/.hermes/skills/`, `<project>/.agents/skills/` after `hermes skills trust`; docs state compatibility with agentskills.io | `pre_tool_call` and `post_tool_call`; a hook can block the call | https://hermes-agent.nousresearch.com/docs/user-guide/features/skills, https://hermes-agent.nousresearch.com/docs/user-guide/features/context-files, https://hermes-agent.nousresearch.com/docs/user-guide/features/hooks |
 | Abacus AI Desktop (CLI, VS Code, app) | loads `~/.abacusai/AGENTS.md`, the git root `AGENTS.md` and the open folder's `AGENTS.md`; shared 40,000-character budget | `<project>/.abacusai/skills/`, `<project>/.agents/skills/`, `~/.abacusai/skills/`, `~/.agents/skills/`; `.claude/skills` is not searched | `PreToolUse` and others; exit code 2 blocks | https://abacus.ai/help/abacusai-desktop/agents-md, https://abacus.ai/help/abacusai-desktop/skills, https://abacus.ai/help/abacusai-desktop/hooks |
 
 A `<project>/.agents/skills/` directory is therefore read by at least two platforms besides the ones that follow Claude Code's own layout. The rows above are a reading of documentation, not a test.
@@ -120,12 +120,11 @@ A `<project>/.agents/skills/` directory is therefore read by at least two platfo
 1. Keep instructions in `AGENTS.md` and make `CLAUDE.md` a one-line import. The rules then travel to any tool that reads the standard.
 2. Keep logic in plain scripts and let hooks only call them. A guard that reads JSON on stdin and exits 2 can be tested from a terminal and re-wired on another platform.
 3. Treat memory as files that go stale. Anything that must survive a machine or be shared belongs in the repository, not in tool-local memory.
-4. Pin a minimum tool version where behaviour depends on it (`onFailure` needs 2.1.295).
+4. Pin a minimum tool version where behaviour depends on it (`onFailure` needs 2.1.295; reading `AGENTS.md` unaided needs 2.1.277).
 
 ## Not confirmed on the day
 
-- Authentication for private-repository marketplaces.
-- The exact rule for when Claude Code reads `AGENTS.md` without a `CLAUDE.md`.
 - Full settings-file precedence (the settings page did not load).
 - MCP specification publication date.
 - The full list of Agent Skills clients.
+- Hermes Agent and Abacus AI Desktop in practice: the table rows are a reading of documentation, not a test.
