@@ -39,7 +39,8 @@ invisible-architecture/
 │   ├── ai-inference-providers.md # AI providers + models + pricing
 │   ├── mcp-directory.md          # MCP registries, servers, clients
 │   ├── agent-frameworks.md       # Framework comparison (LangChain, CrewAI, etc.)
-│   └── vector-databases.md       # Vector DB comparison
+│   ├── vector-databases.md       # Vector DB comparison
+│   └── claude-code-state-2026-11.md  # Claude Code + AGENTS.md/Agent Skills, dated snapshot (13 Nov 2026)
 │
 ├── patterns/
 │   ├── claude-md.md              # CLAUDE.md patterns + examples
